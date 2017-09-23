@@ -1,0 +1,90 @@
+<html>
+<head>
+  <title>Title</title>
+</head>
+<body>
+  <script src="js/pixi.js"></script>
+  <script src="socket.io.js"></script>
+  <script>
+    var socket = io();
+    var app = new PIXI.Application(800, 600, {backgroundColor : 0x1099bb});
+    document.body.appendChild(app.view);
+
+    var bunnys = [];
+    var myid;
+    
+    // create a new Sprite from an image path
+    //var bunny = PIXI.Sprite.fromImage('bunny.png')
+    //
+    //// center the sprite's anchor point
+    //bunny.anchor.set(0.5);
+    //
+    //// move the sprite to the center of the screen
+    //bunny.x = app.renderer.width / 2;
+    //bunny.y = app.renderer.height / 2;
+    //
+
+    function newbunny(msg) {
+      console.log('socket.id', socket.id);
+      let newguy = PIXI.Sprite.fromImage('bunny.png');
+      newguy.x = msg.x;
+      newguy.y = msg.y;
+
+      bunnys[msg.id] = newguy;
+      app.stage.addChild(newguy);
+    }
+
+    socket.on('connect', function () {
+      myid = socket.id;
+      console.log('myid', myid);
+      newbunny({
+        x: 400,
+        y: 300,
+        id: myid
+      });
+    });
+    
+    // Listen for animate update
+    //app.ticker.add(function(delta) {
+    //    // just for fun, let's rotate mr rabbit a little
+    //    // delta is 1 if running at 100% performance
+    //    // creates frame-independent tranformation
+    //  bunnys.forEach(bunny => {
+    //    bunny.rotation += 0.1 * delta;
+    //  });
+    //});
+
+    socket.on('coords', function (msg) {
+      console.log('got', msg);
+      if (!bunnys[msg.id]) {
+        console.log('NEW BUNNY');
+        newbunny(msg);
+      } else {
+        bunnys[msg.id].x = msg.x;
+        bunnys[msg.id].y = msg.y;
+      }
+    });
+
+    document.addEventListener('keydown', function(event) {
+      if (event.keyCode == 37) {    // LEFT
+        move(-10, 0);
+      } else if (event.keyCode == 38) { // UP
+        move(0, -10);
+      } else if (event.keyCode == 39) { // RIGHT
+        move(10, 0);
+      } else if (event.keyCode == 40) { // DOWN
+        move(0, 10);
+      } else {
+        console.log('keycode', event.keyCode);
+      }
+    });
+
+    function move(x, y) {
+      socket.emit('move', {
+        x: bunnys[myid].x + x,
+        y: bunnys[myid].y + y
+      });
+    }
+  </script>
+</body>
+</html>
