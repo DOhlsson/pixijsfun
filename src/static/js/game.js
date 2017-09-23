@@ -1,10 +1,10 @@
-
 var socket = io();
 var app = new PIXI.Application(800, 600, {backgroundColor : 0x1099bb});
+
+document.body.appendChild(app.view);
+
 var spritesheet = PIXI.BaseTexture.fromImage("spritesheet_2.png");
 var ground1 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(72, 95, 21, 21));
-//var ground1 = new PIXI.Texture.fromImage('spritesheet_2.png');
-document.body.appendChild(app.view);
 var tilingSprite = new PIXI.extras.TilingSprite(
   ground1, 
   200,
@@ -16,17 +16,6 @@ app.stage.addChild(tilingSprite);
 
 var bunnys = [];
 var myid;
-
-// create a new Sprite from an image path
-//var bunny = PIXI.Sprite.fromImage('bunny.png')
-//
-//// center the sprite's anchor point
-//bunny.anchor.set(0.5);
-//
-//// move the sprite to the center of the screen
-//bunny.x = app.renderer.width / 2;
-//bunny.y = app.renderer.height / 2;
-//
 
 function newbunny(msg) {
   console.log('socket.id', socket.id);
@@ -59,11 +48,8 @@ document.addEventListener('keydown', function(event) {
     move(-10, 0);
   } else if (event.keyCode == 38) { // UP
     socket.emit('jump', undefined);
-//        move(0, -10);
   } else if (event.keyCode == 39) { // RIGHT
     move(10, 0);
-//      } else if (event.keyCode == 40) { // DOWN
-//        move(0, 10);
   } else {
     console.log('keycode', event.keyCode);
   }
@@ -71,7 +57,6 @@ document.addEventListener('keydown', function(event) {
 
 function move(x, y) {
   socket.emit('move', {
-    x: bunnys[myid].x + x,
-    y: bunnys[myid].y + y
+    x: bunnys[myid].x + x
   });
 }
