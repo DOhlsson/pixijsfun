@@ -41,22 +41,7 @@ function newbunny(msg) {
 socket.on('connect', function () {
   myid = socket.id;
   console.log('myid', myid);
-  newbunny({
-    x: 400,
-//        y: 200,
-    id: myid
-  });
 });
-
-// Listen for animate update
-//app.ticker.add(function(delta) {
-//    // just for fun, let's rotate mr rabbit a little
-//    // delta is 1 if running at 100% performance
-//    // creates frame-independent tranformation
-//  bunnys.forEach(bunny => {
-//    bunny.rotation += 0.1 * delta;
-//  });
-//});
 
 socket.on('coords', function (msg) {
   console.log('got', msg);
