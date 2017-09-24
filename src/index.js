@@ -18,8 +18,8 @@ http.listen(3000, function () {
 });
 
 const bunny = {
-  height: 26,
-  width: 37
+  height: 37,
+  width: 26
 };
 const spawn = {
   x: 400,
@@ -27,16 +27,30 @@ const spawn = {
 };
 const players = {};
 
-const map = [{
-  x: 300,
-  y: 300,
-  height: 400,
-  width: 300
+const map =[{
+  x: 294,
+  y: 294,
+  height: 21,
+  width: 294,
+  tile: 1
 }, {
-  x: 100,
-  y: 200,
-  height: 400,
-  width: 200
+  x: 294,
+  y: 315,
+  height: 378,
+  width: 294,
+  tile: 2
+}, {
+  x: 105,
+  y: 189,
+  height: 21,
+  width: 189,
+  tile: 1
+}, {
+  x: 105,
+  y: 210,
+  height: 399,
+  width: 189,
+  tile: 2
 }];
 
 function emitCoords(player) {

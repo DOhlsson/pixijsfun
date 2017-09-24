@@ -7,6 +7,7 @@ document.body.appendChild(app.view);
 
 var spritesheet = PIXI.BaseTexture.fromImage("spritesheet_2.png");
 var ground1 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(72, 95, 21, 21));
+var ground2 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(49, 118, 21, 21));
 
 var bunnys = [];
 var myid;
@@ -29,7 +30,13 @@ socket.on('connect', function () {
 socket.on('sendMap', function (map) {
   console.log('gotmap', map);
   map.forEach(rect => {
-    var tilingSprite = new PIXI.extras.TilingSprite(ground1, rect.width, rect.height);
+    var sprite;
+    if (rect.tile == 2) {
+      sprite = ground2;
+    } else {
+      sprite = ground1;
+    }
+    var tilingSprite = new PIXI.extras.TilingSprite(sprite, rect.width, rect.height);
     tilingSprite.position.x = rect.x;
     tilingSprite.position.y = rect.y;
     app.stage.addChild(tilingSprite);
