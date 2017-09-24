@@ -54,14 +54,69 @@ socket.on('coords', function (msg) {
   }
 });
 
-document.addEventListener('keydown', function(event) {
-  if (event.keyCode == KEY_LEFT) {    // LEFT
-    socket.emit('move', MOVE_LEFT);
-  } else if (event.keyCode == KEY_UP) { // UP
+function keyboard(keyCode) {
+  var key = {};
+  key.code = keyCode;
+  key.isDown = false;
+  key.isUp = true;
+  key.press = undefined;
+  key.release = undefined;
+  //The `downHandler`
+  key.downHandler = function(event) {
+    if (event.keyCode === key.code) {
+      if (key.isUp && key.press) key.press();
+      key.isDown = true;
+      key.isUp = false;
+    }
+    event.preventDefault();
+  };
+
+  //The `upHandler`
+  key.upHandler = function(event) {
+    if (event.keyCode === key.code) {
+      if (key.isDown && key.release) key.release();
+      key.isDown = false;
+      key.isUp = true;
+    }
+    event.preventDefault();
+  };
+
+  //Attach event listeners
+  window.addEventListener(
+    "keydown", key.downHandler.bind(key), false
+  );
+  window.addEventListener(
+    "keyup", key.upHandler.bind(key), false
+  );
+  return key;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  var jump = keyboard(KEY_UP),
+      moveLeft = keyboard(KEY_LEFT),
+      moveRight = keyboard(KEY_RIGHT);
+
+  jump.press = function() {
     socket.emit('jump', undefined);
-  } else if (event.keyCode == KEY_RIGHT) { // RIGHT
+  };
+
+  jump.release = function() {
+    socket.emit('move', STOP_JUMP);
+  };
+
+  moveLeft.press = function() {
+    socket.emit('move', MOVE_LEFT);
+  };
+
+  moveLeft.release = function() {
+    socket.emit('move', STOP_LEFT);
+  };
+
+  moveRight.press = function() {
     socket.emit('move', MOVE_RIGHT);
-  } else {
-    console.log('keycode', event.keyCode);
-  }
+  };
+
+  moveRight.release = function() {
+    socket.emit('move', STOP_RIGHT);
+  };
 });

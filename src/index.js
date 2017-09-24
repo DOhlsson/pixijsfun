@@ -69,44 +69,38 @@ io.on('connection', function(socket) {
     id: socket.id,
     x: spawn.x,
     y: spawn.y,
-    velocity: 0,
-    direction: 0
+    direction: 0,
+    last_direction: 0,
+    yvel: 0,
+    xvel: 0,
+    jumping: false
   };
   emitCoords(players[socket.id]);
 
+  var player = players[socket.id];
+
   socket.on('move', function(msg) {
     if(msg === constants.MOVE_RIGHT) {
-      if(players[socket.id].direction === constants.MOVE_RIGHT) {
-        if(players[socket.id].velocity <= 1) {
-          players[socket.id].velocity += 0.1;
-        }
-      } else {
-        players[socket.id].velocity = 0.5;
-        players[socket.id].direction = constants.MOVE_RIGHT;
-      }
-
-      players[socket.id].x += BASE_SPEED * players[socket.id].velocity;
+      player.xvel = 0.1;
+      player.direction = constants.MOVE_RIGHT;
     } else if(msg === constants.MOVE_LEFT) {
-      if(players[socket.id].direction === constants.MOVE_LEFT) {
-        if(players[socket.id].velocity <= 1) {
-          players[socket.id].velocity += 0.5;
-        }
-      } else {
-        players[socket.id].velocity = 0.1;
-        players[socket.id].direction = constants.MOVE_LEFT;
-      }
-      players[socket.id].x -= BASE_SPEED * players[socket.id].velocity;
+      player.xvel = 0.1;
+      player.direction = constants.MOVE_LEFT;
+    } else if(msg === constants.STOP_RIGHT &&
+             player.direction === constants.MOVE_RIGHT) {
+      player.direction = constants.STOP;
+    } else if(msg === constants.STOP_LEFT &&
+             player.direction === constants.MOVE_LEFT) {
+      player.direction = constants.STOP;
+    } else if(msg === constants.STOP_JUMPING) {
+      player.jumping = false;
     }
-    //players[socket.id].x = msg.x;
-    emitCoords(players[socket.id]);
-    console.log(socket.id + ' sent ' + JSON.stringify(msg, null, 2));
   });
 
   socket.on('jump', function() {
-    console.log('we got jump');
-    var player = players[socket.id];
     if (player.onGround) {
       player.yvel = -10;
+      player.jumping = true;
     }
   });
 
@@ -118,16 +112,34 @@ io.on('connection', function(socket) {
 });
 
 function verticalMovement(player) {
+  if (player.jumping) {
+    player.yvel -= 1.5;
+    if(player.yvel < -12) {
+      player.jumping=false;
+    }
+  }
   if (player.yvel > 0 || !player.onGround) {
     player.yvel += 0.7; // accelerate downwards
     player.yvel = player.yvel < 10 ? player.yvel : 10;
     player.y += player.yvel;
-    checkPlatforms(player);
-    emitCoords(player);
   } else if (player.yvel < 0) { // moving up
     player.y += player.yvel;
     player.onGround = false;
-    emitCoords(player);
+  }
+}
+
+function horizontalMovement(player) {
+  if (player.xvel > 0) {
+    if (player.direction === constants.MOVE_LEFT) {
+      player.x -= BASE_SPEED * player.xvel;
+      if(player.xvel < 1.0) player.xvel += 0.05;
+    } else if(player.direction === constants.MOVE_RIGHT) {
+      player.x += BASE_SPEED * player.xvel;
+      if(player.xvel < 1.0) player.xvel += 0.05;
+    } else if(player.direction === constants.STOP &&
+              player.xvel > 0) {
+      player.xvel -= 0.1;
+    }
   }
 }
 
@@ -153,6 +165,9 @@ function gameLoop() {
   Object.keys(players).forEach(key => {
     var player = players[key];
     verticalMovement(player);
+    horizontalMovement(player);
+    checkPlatforms(player);
+    emitCoords(player);
   });
 }
 
