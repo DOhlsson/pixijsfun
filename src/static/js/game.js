@@ -5,14 +5,6 @@ document.body.appendChild(app.view);
 
 var spritesheet = PIXI.BaseTexture.fromImage("spritesheet_2.png");
 var ground1 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(72, 95, 21, 21));
-var tilingSprite = new PIXI.extras.TilingSprite(
-  ground1, 
-  200,
-  300,
-);
-tilingSprite.position.x = 300;
-tilingSprite.position.y = 300;
-app.stage.addChild(tilingSprite);
 
 var bunnys = [];
 var myid;
@@ -32,8 +24,18 @@ socket.on('connect', function () {
   console.log('myid', myid);
 });
 
+socket.on('sendMap', function (map) {
+  console.log('gotmap', map);
+  map.forEach(rect => {
+    var tilingSprite = new PIXI.extras.TilingSprite(ground1, rect.width, rect.height);
+    tilingSprite.position.x = rect.x;
+    tilingSprite.position.y = rect.y;
+    app.stage.addChild(tilingSprite);
+  });
+});
+
+
 socket.on('coords', function (msg) {
-  console.log('got', msg);
   if (!bunnys[msg.id]) {
     console.log('NEW BUNNY');
     newbunny(msg);
