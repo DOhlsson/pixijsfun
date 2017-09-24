@@ -8,9 +8,9 @@ document.body.appendChild(app.view);
 var spritesheet = PIXI.BaseTexture.fromImage("spritesheet_2.png");
 var ground1 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(72, 95, 21, 21));
 var tilingSprite = new PIXI.extras.TilingSprite(
-  ground1, 
+  ground1,
   200,
-  300,
+  300
 );
 tilingSprite.position.x = 300;
 tilingSprite.position.y = 300;
