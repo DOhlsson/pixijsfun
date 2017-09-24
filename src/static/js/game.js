@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */ 
+
 var socket = io();
 var app = new PIXI.Application(800, 600, {backgroundColor : 0x1099bb});
 
