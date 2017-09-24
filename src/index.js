@@ -82,10 +82,11 @@ function verticalMovement(player) {
     player.yvel = player.yvel < 10 ? player.yvel : 10;
     player.y += player.yvel;
     checkPlatforms(player);
-  }
-  if (player.yvel < 0) { // moving up
+    emitCoords(player);
+  } else if (player.yvel < 0) { // moving up
     player.y += player.yvel;
     player.onGround = false;
+    emitCoords(player);
   }
 }
 
@@ -103,7 +104,7 @@ function checkPlatforms(player) {
     }
   });
   if (!onGround) {
-    onGround = false;
+    player.onGround = false;
   }
 }
 
