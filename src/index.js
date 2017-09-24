@@ -4,6 +4,7 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const constants = require('./static/js/common_constants');
+const mapgen = require('./mapgen');
 
 const BASE_SPEED = 10;
 
@@ -27,31 +28,7 @@ const spawn = {
 };
 const players = {};
 
-const map =[{
-  x: 294,
-  y: 294,
-  height: 21,
-  width: 294,
-  tile: 1
-}, {
-  x: 294,
-  y: 315,
-  height: 378,
-  width: 294,
-  tile: 2
-}, {
-  x: 105,
-  y: 189,
-  height: 21,
-  width: 189,
-  tile: 1
-}, {
-  x: 105,
-  y: 210,
-  height: 399,
-  width: 189,
-  tile: 2
-}];
+const map = mapgen();
 
 function emitCoords(player) {
   io.emit('coords', {
@@ -146,7 +123,8 @@ function horizontalMovement(player) {
 function checkPlatforms(player) {
   onGround = false;
   map.forEach(rect => {
-    if (player.y >= rect.y - bunny.height &&
+    if (rect.tile == 1 &&
+      player.y >= rect.y - bunny.height &&
       player.y <= rect.y + rect.height - bunny.height &&
       player.x >= rect.x - bunny.width + 5 &&	// fall of on left side
       player.x <= rect.x + rect.width - 5 ) {	// fall of on right side

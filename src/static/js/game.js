@@ -9,6 +9,63 @@ var spritesheet = PIXI.BaseTexture.fromImage("spritesheet_2.png");
 var ground1 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(72, 95, 21, 21));
 var ground2 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(49, 118, 21, 21));
 
+container = new PIXI.Container();
+app.stage.addChild(container);
+
+// the camera trap defines an area in which the camera will not scroll unnecesarily
+//camtrap = new PIXI.Rectangle(200, 200, 200, 200);
+//setInterval(() => {
+//  camtrap.y += 10;
+//  camtrapg.y += 10;
+//}, 1000);
+
+var camtrap = {
+  x: 300,
+  y: 200,
+  relx: 300,
+  rely: 200,
+  width: 200,
+  height: 200
+}
+// Used to display the camtrap
+var camtrapg = new PIXI.Graphics();
+camtrapg.lineStyle(2, 0xFF0000);
+camtrapg.drawRect(0, 0, 200, 200);
+camtrapg.y = camtrap.y;
+camtrapg.x = camtrap.x;
+container.addChild(camtrapg);
+console.log('CAMTRAPG', camtrapg.y, camtrapg.position.y);
+
+function moveCamera() {
+  var mybunny = bunnys[myid];
+  var scrollvel = 10;
+
+  console.log('bunny', mybunny.x, mybunny.y);
+  console.log('camtrap', camtrap.x, camtrap.y);
+  console.log('container', container.position.x, container.position.y);
+
+  // horizontal scroll
+  if (mybunny.x + mybunny.width > camtrap.x + camtrap.width) { // scroll right
+    container.position.x = camtrap.relx - camtrap.x;
+    camtrap.x = mybunny.x - camtrap.width + mybunny.width;
+  } else if (mybunny.x < camtrap.x) { // scroll left
+    container.position.x = camtrap.relx - camtrap.x;
+    camtrap.x = mybunny.x;
+  }
+
+  // vertical scroll
+  if (mybunny.y < camtrap.y) { // Scroll up
+    container.position.y = camtrap.rely - camtrap.y;
+    camtrap.y = mybunny.y;
+  } else if (mybunny.y + mybunny.height > camtrap.y + camtrap.height) { // scroll down
+    container.position.y = camtrap.rely - camtrap.y;
+    camtrap.y = mybunny.y - camtrap.height + mybunny.height;
+  }
+
+  camtrapg.y = camtrap.y;
+  camtrapg.x = camtrap.x;
+}
+
 var bunnys = [];
 var myid;
 
@@ -19,7 +76,7 @@ function newbunny(msg) {
   newguy.y = msg.y;
 
   bunnys[msg.id] = newguy;
-  app.stage.addChild(newguy);
+  container.addChild(newguy);
 }
 
 socket.on('connect', function () {
@@ -39,7 +96,7 @@ socket.on('sendMap', function (map) {
     var tilingSprite = new PIXI.extras.TilingSprite(sprite, rect.width, rect.height);
     tilingSprite.position.x = rect.x;
     tilingSprite.position.y = rect.y;
-    app.stage.addChild(tilingSprite);
+    container.addChild(tilingSprite);
   });
 });
 
@@ -51,6 +108,9 @@ socket.on('coords', function (msg) {
   } else {
     bunnys[msg.id].x = msg.x;
     bunnys[msg.id].y = msg.y;
+  }
+  if (msg.id === myid) {
+    moveCamera();
   }
 });
 
