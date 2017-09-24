@@ -3,6 +3,9 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const constants = require('./static/js/common_constants');
+
+const BASE_SPEED = 10;
 
 app.get('/', function(req, res){
   res.sendFile('index.html', { root: __dirname + "/static" } );
@@ -51,12 +54,36 @@ io.on('connection', function(socket) {
   players[socket.id] = {
     id: socket.id,
     x: spawn.x,
-    y: spawn.y
+    y: spawn.y,
+    velocity: 0,
+    direction: 0
   };
   emitCoords(players[socket.id]);
 
   socket.on('move', function(msg) {
-    players[socket.id].x = msg.x;
+    if(msg === constants.MOVE_RIGHT) {
+      if(players[socket.id].direction === constants.MOVE_RIGHT) {
+        if(players[socket.id].velocity <= 1) {
+          players[socket.id].velocity += 0.1;
+        }
+      } else {
+        players[socket.id].velocity = 0.5;
+        players[socket.id].direction = constants.MOVE_RIGHT;
+      }
+
+      players[socket.id].x += BASE_SPEED * players[socket.id].velocity;
+    } else if(msg === constants.MOVE_LEFT) {
+      if(players[socket.id].direction === constants.MOVE_LEFT) {
+        if(players[socket.id].velocity <= 1) {
+          players[socket.id].velocity += 0.5;
+        }
+      } else {
+        players[socket.id].velocity = 0.1;
+        players[socket.id].direction = constants.MOVE_LEFT;
+      }
+      players[socket.id].x -= BASE_SPEED * players[socket.id].velocity;
+    }
+    //players[socket.id].x = msg.x;
     emitCoords(players[socket.id]);
     console.log(socket.id + ' sent ' + JSON.stringify(msg, null, 2));
   });

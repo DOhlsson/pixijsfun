@@ -48,19 +48,13 @@ socket.on('coords', function (msg) {
 });
 
 document.addEventListener('keydown', function(event) {
-  if (event.keyCode == 37) {    // LEFT
-    move(-10, 0);
-  } else if (event.keyCode == 38) { // UP
+  if (event.keyCode == KEY_LEFT) {    // LEFT
+    socket.emit('move', MOVE_LEFT);
+  } else if (event.keyCode == KEY_UP) { // UP
     socket.emit('jump', undefined);
-  } else if (event.keyCode == 39) { // RIGHT
-    move(10, 0);
+  } else if (event.keyCode == KEY_RIGHT) { // RIGHT
+    socket.emit('move', MOVE_RIGHT);
   } else {
     console.log('keycode', event.keyCode);
   }
 });
-
-function move(x, y) {
-  socket.emit('move', {
-    x: bunnys[myid].x + x
-  });
-}
