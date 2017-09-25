@@ -11,6 +11,20 @@ var spritesheet = PIXI.BaseTexture.fromImage("img/spritesheet_2.png");
 var ground1 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(72, 95, 21, 21));
 var ground2 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(49, 118, 21, 21));
 
+PIXI.loader.add('img/rocket.json').load((a, b, c) => {
+  let frames = [];
+  for ( var i = 0; i <= 3; i++) {
+    frames.push(PIXI.Texture.fromFrame('rocket' + i + '.png'));
+  }
+  let animation = new PIXI.extras.AnimatedSprite(frames);
+  animation.animationSpeed = 0.3;
+  animation.play();
+  container.addChild(animation);
+  app.ticker.add(() => {
+    animation.x += 5;
+  });
+});
+
 // container contains most items we draw
 // we move the camera by moving around the container
 // items that are added to app.stage are static on the screen
