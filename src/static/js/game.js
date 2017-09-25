@@ -5,9 +5,9 @@ var app = new PIXI.Application(800, 600, {backgroundColor : 0x1099bb});
 
 document.body.appendChild(app.view);
 
-var bunny_texture = PIXI.Texture.fromImage("bunny_gun.png");
+var bunny_texture = PIXI.Texture.fromImage("img/bunny_gun.png");
 
-var spritesheet = PIXI.BaseTexture.fromImage("spritesheet_2.png");
+var spritesheet = PIXI.BaseTexture.fromImage("img/spritesheet_2.png");
 var ground1 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(72, 95, 21, 21));
 var ground2 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(49, 118, 21, 21));
 
