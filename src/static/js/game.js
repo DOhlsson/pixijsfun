@@ -5,19 +5,18 @@ var app = new PIXI.Application(800, 600, {backgroundColor : 0x1099bb});
 
 document.body.appendChild(app.view);
 
+var bunny_texture = PIXI.Texture.fromImage("bunny_gun.png");
+
 var spritesheet = PIXI.BaseTexture.fromImage("spritesheet_2.png");
 var ground1 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(72, 95, 21, 21));
 var ground2 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(49, 118, 21, 21));
 
+// container contains most items we draw
+// we move the camera by moving around the container
+// items that are added to app.stage are static on the screen
+// and do not move with the camera
 container = new PIXI.Container();
 app.stage.addChild(container);
-
-// the camera trap defines an area in which the camera will not scroll unnecesarily
-//camtrap = new PIXI.Rectangle(200, 200, 200, 200);
-//setInterval(() => {
-//  camtrap.y += 10;
-//  camtrapg.y += 10;
-//}, 1000);
 
 var camtrap = {
   x: 300,
@@ -26,7 +25,8 @@ var camtrap = {
   rely: 200,
   width: 200,
   height: 200
-}
+};
+
 // Used to display the camtrap
 var camtrapg = new PIXI.Graphics();
 camtrapg.lineStyle(2, 0xFF0000);
@@ -39,10 +39,6 @@ console.log('CAMTRAPG', camtrapg.y, camtrapg.position.y);
 function moveCamera() {
   var mybunny = bunnys[myid];
   var scrollvel = 10;
-
-  console.log('bunny', mybunny.x, mybunny.y);
-  console.log('camtrap', camtrap.x, camtrap.y);
-  console.log('container', container.position.x, container.position.y);
 
   // horizontal scroll
   if (mybunny.x + mybunny.width > camtrap.x + camtrap.width) { // scroll right
@@ -71,9 +67,13 @@ var myid;
 
 function newbunny(msg) {
   console.log('socket.id', socket.id);
-  let newguy = PIXI.Sprite.fromImage('bunny.png');
+  let newguy = new PIXI.Container();
+  let bunny = new PIXI.Sprite(bunny_texture);
+  newguy.addChild(bunny);
+  newguy.bunny = bunny; // store a reference for easier access
   newguy.x = msg.x;
   newguy.y = msg.y;
+  //newguy.anchor.x = 0.5;
 
   bunnys[msg.id] = newguy;
   container.addChild(newguy);
@@ -106,8 +106,14 @@ socket.on('coords', function (msg) {
     console.log('NEW BUNNY');
     newbunny(msg);
   } else {
-    bunnys[msg.id].x = msg.x;
-    bunnys[msg.id].y = msg.y;
+    let bunny = bunnys[msg.id];
+    bunny.x = msg.x;
+    bunny.y = msg.y;
+    // bunny.bunny is the sprite inside the container
+    // we flip it with scale.x = 1 or -1
+    // and change the x offset of the sprite inside the container
+    bunny.bunny.scale.x = msg.facing;
+    bunny.bunny.x = msg.facing === 1 ? 0 : 26;
   }
   if (msg.id === myid) {
     moveCamera();

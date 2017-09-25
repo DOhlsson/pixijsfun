@@ -25,10 +25,10 @@ module.exports = function () {
     tile: 2
   }];
 
-  for (var i = 0; i < 200; i++) {
+  for (var i = 0; i < 400; i++) {
     map.push({
       x: 588 + 21 * i,
-      y: 294 - 21 * Math.round(4*Math.sin(Math.PI*i/12)),
+      y: 294 - 21 * Math.round(16 * i/400 * Math.sin(Math.PI * i/12)),
       height: 21,
       width: 21,
       tile: 1

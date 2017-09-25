@@ -34,7 +34,8 @@ function emitCoords(player) {
   io.emit('coords', {
     id: player.id,
     x: player.x,
-    y: player.y
+    y: player.y,
+    facing: player.facing
   });
 }
 
@@ -50,7 +51,8 @@ io.on('connection', function(socket) {
     last_direction: 0,
     yvel: 0,
     xvel: 0,
-    jumping: false
+    jumping: false,
+    facing: 1
   };
   emitCoords(players[socket.id]);
 
@@ -108,9 +110,11 @@ function verticalMovement(player) {
 function horizontalMovement(player) {
   if (player.xvel > 0) {
     if (player.direction === constants.MOVE_LEFT) {
+      player.facing = -1;
       player.x -= BASE_SPEED * player.xvel;
       if(player.xvel < 1.0) player.xvel += 0.05;
     } else if(player.direction === constants.MOVE_RIGHT) {
+      player.facing = 1;
       player.x += BASE_SPEED * player.xvel;
       if(player.xvel < 1.0) player.xvel += 0.05;
     } else if(player.direction === constants.STOP &&
