@@ -6,6 +6,7 @@ const io = module.exports = require('socket.io')(http);
 const constants = require('./static/js/common_constants');
 const mapgen = require('./mapgen');
 const enemy = require('./enemy');
+const bullet = require('./bullet');
 
 const BASE_SPEED = 10;
 
@@ -28,6 +29,8 @@ const spawn = {
   y: 200
 };
 const players = {};
+const bullets = {};
+var bulletId = 0;
 
 const map = mapgen();
 
@@ -82,6 +85,11 @@ io.on('connection', function(socket) {
       player.yvel = -10;
       player.jumping = true;
     }
+  });
+
+  socket.on('shoot', function() {
+    bullets[bulletId] = new bullet.Bullet(bulletId, player.x, player.y+7, player.facing*10);
+    bulletId++;
   });
 
   socket.on('disconnect', function() {
@@ -178,6 +186,18 @@ function gameLoop() {
     checkPlatforms(player);
     emitCoords(player);
   });
+
+  Object.keys(bullets).forEach(key => {
+    let b = bullets[key];
+    if(b != undefined) {
+      b.emitCoords();
+      if(!b.move()) {
+        b.emitDestroy();
+        bullets[key] = undefined;
+      }
+    }
+  });
+
   bug.move();
   checkPlatformsEnemy(bug);
   verticalMovementEnemy(bug);
