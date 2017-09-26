@@ -2,9 +2,10 @@
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
-const io = require('socket.io')(http);
+const io = module.exports = require('socket.io')(http);
 const constants = require('./static/js/common_constants');
 const mapgen = require('./mapgen');
+const enemy = require('./enemy');
 
 const BASE_SPEED = 10;
 
@@ -143,6 +144,32 @@ function checkPlatforms(player) {
   }
 }
 
+function checkPlatformsEnemy(enemy) {
+  onGround = false;
+  map.forEach(rect => {
+    if (rect.tile == 1 &&
+        enemy.getY() >= rect.y - enemy.getHeight() &&
+        enemy.getY() <= rect.y + rect.height - enemy.getHeight() &&
+        enemy.getX() >= rect.x - enemy.getWidth() + 5 &&	// fall of on left side
+        enemy.getX() <= rect.x + rect.width - 5 ) {	// fall of on right side
+        enemy.setYvel(0);
+      enemy.setOnGround(true);
+      onGround = true;
+      enemy.setY(rect.y - enemy.getHeight());
+    }
+  });
+  if (!onGround) {
+    enemy.setOnGround(false);
+  }
+}
+
+function verticalMovementEnemy(enemy) {
+  if (!enemy.isOnGround()) {
+    enemy.setY(enemy.getY() + 1);
+  }
+}
+
+
 function gameLoop() {
   Object.keys(players).forEach(key => {
     var player = players[key];
@@ -151,6 +178,11 @@ function gameLoop() {
     checkPlatforms(player);
     emitCoords(player);
   });
+  bug.move();
+  checkPlatformsEnemy(bug);
+  verticalMovementEnemy(bug);
 }
 
+var bug = new enemy.Ladybug(0, 750, 100);
 setInterval(gameLoop, 16);
+
