@@ -11,6 +11,13 @@ var spritesheet = PIXI.BaseTexture.fromImage("img/spritesheet_2.png");
 var ground1 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(72, 95, 21, 21));
 var ground2 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(49, 118, 21, 21));
 
+sounds.load([
+  'sound/40_smith_wesson_single-mike-koenig.mp3'
+]);
+
+var shootSound = sounds["sound/40_smith_wesson_single-mike-koenig.mp3"];
+
+
 PIXI.loader.add('img/rocket.json').load((a, b, c) => {
   let frames = [];
   for ( var i = 0; i <= 3; i++) {
@@ -201,7 +208,8 @@ function keyboard(keyCode) {
 document.addEventListener('DOMContentLoaded', function () {
   var jump = keyboard(KEY_UP),
       moveLeft = keyboard(KEY_LEFT),
-      moveRight = keyboard(KEY_RIGHT);
+      moveRight = keyboard(KEY_RIGHT),
+      shoot = keyboard(KEY_CTRL);
 
   jump.press = function() {
     socket.emit('jump', undefined);
@@ -226,4 +234,9 @@ document.addEventListener('DOMContentLoaded', function () {
   moveRight.release = function() {
     socket.emit('move', STOP_RIGHT);
   };
+
+  shoot.press = function() {
+    shootSound.play();
+  };
+
 });

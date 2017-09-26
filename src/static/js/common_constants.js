@@ -12,6 +12,7 @@ const STOP_JUMP = 6;
 const KEY_LEFT = 37;
 const KEY_UP = 38;
 const KEY_RIGHT = 39;
+const KEY_CTRL = 17;
 
 module.exports = {
   MOVE_LEFT: MOVE_LEFT,
@@ -23,5 +24,6 @@ module.exports = {
 
   KEY_LEFT: KEY_LEFT,
   KEY_RIGHT: KEY_RIGHT,
-  KEY_UP: KEY_UP
+  KEY_UP: KEY_UP,
+  KEY_CTRL: KEY_CTRL
 };
