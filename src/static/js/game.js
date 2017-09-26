@@ -10,6 +10,8 @@ var bunny_texture = PIXI.Texture.fromImage("img/bunny_gun.png");
 var spritesheet = PIXI.BaseTexture.fromImage("img/spritesheet_2.png");
 var ground1 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(72, 95, 21, 21));
 var ground2 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(49, 118, 21, 21));
+let rocket_frames = [];
+let spHead_frames = [];
 
 sounds.load([
   'sound/40_smith_wesson_single-mike-koenig.mp3'
@@ -17,27 +19,43 @@ sounds.load([
 
 var shootSound = sounds["sound/40_smith_wesson_single-mike-koenig.mp3"];
 
-
-PIXI.loader.add('img/rocket.json').load((a, b, c) => {
-  let frames = [];
-  for ( var i = 0; i <= 3; i++) {
-    frames.push(PIXI.Texture.fromFrame('rocket' + i + '.png'));
-  }
-  let animation = new PIXI.extras.AnimatedSprite(frames);
-  animation.animationSpeed = 0.3;
-  animation.play();
-  container.addChild(animation);
-  app.ticker.add(() => {
-    animation.x += 5;
-  });
-});
-
 // container contains most items we draw
 // we move the camera by moving around the container
 // items that are added to app.stage are static on the screen
 // and do not move with the camera
 container = new PIXI.Container();
 app.stage.addChild(container);
+
+PIXI.loader.add('img/rocket.json').add('img/spinning_head.json').load(() => {
+  // Rocket
+  for ( var i = 0; i <= 3; i++) {
+    rocket_frames.push(PIXI.Texture.fromFrame('rocket' + i + '.png'));
+  }
+  let rocket_animation = new PIXI.extras.AnimatedSprite(rocket_frames);
+  rocket_animation.animationSpeed = 0.3;
+  rocket_animation.play();
+  container.addChild(rocket_animation);
+  app.ticker.add(() => {
+    rocket_animation.x += 5;
+  });
+
+  // Spinning head
+  for ( var i = 0; i <= 9; i++) {
+    spHead_frames.push(PIXI.Texture.fromFrame('spinning_head' + i + '.png'));
+  }
+  let spHead_animation = new PIXI.extras.AnimatedSprite(spHead_frames);
+  spHead_animation.animationSpeed = 0.2;
+  spHead_animation.play();
+  container.addChild(spHead_animation);
+
+  spHead_animation.y = 125;
+  spHead_animation.scale.x = 2;
+  spHead_animation.scale.y = 2;
+  app.ticker.add(() => {
+    spHead_animation.x += 3;
+    spHead_animation.y = 60 + Math.round(50*Math.sin(spHead_animation.x/180*Math.PI))
+  });
+});
 
 var camtrap = {
   x: 300,
@@ -158,7 +176,6 @@ function newenemy(msg) {
 }
 
 socket.on('enemy', function(msg) {
-  console.log('enemy');
   if (!enemies[msg.id]) {
     console.log('NEW ENEMY');
     newenemy(msg);

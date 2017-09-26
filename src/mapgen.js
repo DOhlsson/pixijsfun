@@ -25,7 +25,7 @@ module.exports = function () {
     tile: 2
   }];
 
-  for (var i = 0; i < 400; i++) {
+  for (var i = 0; i < 800; i++) {
     map.push({
       x: 588 + 21 * i,
       y: 294 - 21 * Math.round(16 * i/400 * Math.sin(Math.PI * i/12)),
