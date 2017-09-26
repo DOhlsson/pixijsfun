@@ -741,7 +741,7 @@ function soundEffect(
   //above or below the target frequency.
   var frequency;
   var randomInt = function(min, max){
-    return Math.floor(Math.random() * (max - min + 1)) + min
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   };
   if (randomValue > 0) {
     frequency = randomInt(
