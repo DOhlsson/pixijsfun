@@ -7,16 +7,19 @@ class Bullet extends entity.Entity {
   constructor(id, x, y, xvel) {
     super(id, x, y, "img/bullet.png");
     this.xvel = xvel;
-    this.range = this.x + (xvel * 1000);
+    this.range = this.x + xvel * 400;
   }
 
-  /* moves the bullet
-   * returns false if the bullet should disappear
-   */
-  move() {
+  move(map) {
     this.x += this.xvel;
+    this.emitCoords();
+    console.log('bullet' + this.x);
 
-    return this.x != this.range;
+    if((this.range < 0 && this.x < this.range) ||
+      this.range > 0 && this.x > this.range) {
+      this.emitDestroy();
+      this.delete = true;
+    }
   }
 
   emitCoords() {

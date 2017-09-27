@@ -12,6 +12,7 @@ class Entity {
     this.width = width;
     this.hitpoints = 1;
     this.facing = 1;
+    this.delete = false;
   }
 
   getId() {

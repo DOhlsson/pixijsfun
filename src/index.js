@@ -1,4 +1,4 @@
-/*jshint esversion: 6 */ 
+/* jshint esversion: 6 */ 
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
@@ -8,6 +8,7 @@ const enemy = require('./enemy');
 const bullet = require('./bullet');
 const Player = require('./player');
 const mapgen = require('./mapgen');
+const EntityManager = require('./entityManager.js');
 
 app.get('/', function(req, res){
   res.sendFile('index.html', { root: __dirname + "/static" } );
@@ -23,9 +24,8 @@ const spawn = {
   x: 400,
   y: 200
 };
-const players = {};
-const bullets = {};
-var bulletId = 0;
+
+const entityManager = new EntityManager();
 
 const map = mapgen();
 
@@ -33,8 +33,9 @@ const map = mapgen();
 io.on('connection', function(socket) {
   socket.emit('sendMap', map);
 
-  players[socket.id] = new Player.Player(socket.id, spawn.x, spawn.y);
-  let player = players[socket.id];
+  let id = socket.id;
+  entityManager.addEntity(id, new Player.Player(id, spawn.x, spawn.y));
+  let player = entityManager.getEntity(id);
 
   socket.on('move', function(msg) {
     player.changeDirection(msg);
@@ -45,37 +46,30 @@ io.on('connection', function(socket) {
   });
 
   socket.on('shoot', function() {
-    bullets[bulletId] = new bullet.Bullet(bulletId, player.x, player.y+7, player.facing*10);
-    bulletId++;
+    let bulletId = entityManager.getFreeId();
+    entityManager.addEntity(bulletId, new bullet.Bullet(bulletId, player.x, player.y+7, player.facing*10));
   });
 
   socket.on('disconnect', function() {
     console.log('disconnect', socket.id);
-    delete players[socket.id];
-    console.log(players);
+    entityManager.deleteEntity(id);
   });
 });
 
 function gameLoop() {
-  Object.keys(players).forEach(key => {
-    let player = players[key];
-    player.move(map);
-  });
-
-  Object.keys(bullets).forEach(key => {
-    let b = bullets[key];
-    if(b != undefined) {
-      b.emitCoords();
-      if(!b.move()) {
-        b.emitDestroy();
-        bullets[key] = undefined;
-      }
+  Object.keys(entityManager.getEntities()).forEach(key => {
+    let entity = entityManager.getEntities()[key];
+    if(entity.delete) {
+      entityManager.deleteEntity(key);
     }
+    entity.move(map);
   });
-
-  bug.move(map);
 }
 
-var bug = new enemy.Ladybug(111, 750, 100);
+for(let i = 0; i < 10; i++) {
+  let id = entityManager.getFreeId();
+  entityManager.addEntity(id, new enemy.Ladybug(id, 750+(i*200), 100));
+}
+
 setInterval(gameLoop, 16);
 
