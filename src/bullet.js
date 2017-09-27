@@ -13,7 +13,6 @@ class Bullet extends entity.Entity {
   move(map) {
     this.x += this.xvel;
     this.emitCoords();
-    console.log('bullet' + this.x);
 
     if((this.range < 0 && this.x < this.range) ||
       this.range > 0 && this.x > this.range) {

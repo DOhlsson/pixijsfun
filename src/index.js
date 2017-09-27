@@ -50,6 +50,13 @@ io.on('connection', function(socket) {
     entityManager.addEntity(bulletId, new bullet.Bullet(bulletId, player.x, player.y+7, player.facing*10));
   });
 
+  socket.on('spawnBugs', function(x) {
+    for(let i = 0; i < 5; i++) {
+      let id = entityManager.getFreeId();
+      entityManager.addEntity(id, new enemy.Ladybug(id, x+(i*200), 100));
+    }
+  });
+
   socket.on('disconnect', function() {
     console.log('disconnect', socket.id);
     entityManager.deleteEntity(id);
@@ -62,13 +69,17 @@ function gameLoop() {
     if(entity.delete) {
       entityManager.deleteEntity(key);
     }
+
+    let col = entityManager.getCollision(entity);
+    if(col !== undefined) {
+      if(col.constructor.name === 'Ladybug' && entity.constructor.name === 'Bullet') {
+        console.log('Killed ladybug');
+        col.delete = true;
+        entity.delete = true;
+      }
+    }
     entity.move(map);
   });
-}
-
-for(let i = 0; i < 10; i++) {
-  let id = entityManager.getFreeId();
-  entityManager.addEntity(id, new enemy.Ladybug(id, 750+(i*200), 100));
 }
 
 setInterval(gameLoop, 16);

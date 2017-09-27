@@ -221,7 +221,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var jump = keyboard(KEY_UP),
       moveLeft = keyboard(KEY_LEFT),
       moveRight = keyboard(KEY_RIGHT),
-      shoot = keyboard(KEY_CTRL);
+      shoot = keyboard(KEY_CTRL),
+      spawnBugs = keyboard(KEY_Q);
 
   jump.press = function() {
     socket.emit('jump', undefined);
@@ -249,6 +250,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
   shoot.press = function() {
     socket.emit('shoot', undefined);
+  };
+
+  spawnBugs.press = function() {
+    socket.emit('spawnBugs', camtrap.x);
   };
 
 });

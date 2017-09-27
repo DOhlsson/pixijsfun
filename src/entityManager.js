@@ -29,4 +29,20 @@ module.exports = class EntityManager {
   deleteEntity(id) {
     delete entities[id];
   }
+
+  getCollision(obj) {
+    let retn;
+
+    Object.keys(entities).forEach(key => {
+      let e = entities[key];
+      if( (obj.x >= e.x && obj.x <= e.x+e.width) &&
+          (obj.y >= e.y && obj.y <= e.y+e.height) &&
+        e !== obj && retn === undefined) {
+        retn = e;
+      }
+    });
+
+    return retn;
+  }
 };
+
