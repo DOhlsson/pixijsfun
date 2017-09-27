@@ -28,7 +28,7 @@ app.stage.addChild(container);
 
 PIXI.loader.add('img/rocket.json').add('img/spinning_head.json').load(() => {
   // Rocket
-  for ( var i = 0; i <= 3; i++) {
+  for ( let i = 0; i <= 3; i++) {
     rocket_frames.push(PIXI.Texture.fromFrame('rocket' + i + '.png'));
   }
   let rocket_animation = new PIXI.extras.AnimatedSprite(rocket_frames);
@@ -40,7 +40,7 @@ PIXI.loader.add('img/rocket.json').add('img/spinning_head.json').load(() => {
   });
 
   // Spinning head
-  for ( var i = 0; i <= 9; i++) {
+  for ( let i = 0; i <= 9; i++) {
     spHead_frames.push(PIXI.Texture.fromFrame('spinning_head' + i + '.png'));
   }
   let spHead_animation = new PIXI.extras.AnimatedSprite(spHead_frames);
@@ -53,7 +53,7 @@ PIXI.loader.add('img/rocket.json').add('img/spinning_head.json').load(() => {
   spHead_animation.scale.y = 2;
   app.ticker.add(() => {
     spHead_animation.x += 3;
-    spHead_animation.y = 60 + Math.round(50*Math.sin(spHead_animation.x/180*Math.PI))
+    spHead_animation.y = 60 + Math.round(50*Math.sin(spHead_animation.x/180*Math.PI));
   });
 });
 
