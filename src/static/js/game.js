@@ -194,28 +194,14 @@ socket.on('enemy', function(msg) {
   }
 });
 
-function newbullet(msg) {
-  let evilguy = new PIXI.Container();
-
-  //var bunny_texture = PIXI.Texture.fromImage("img/bunny_gun.png");
-  let texture = new PIXI.Sprite(PIXI.Texture.fromImage(msg.texture));
-  evilguy.addChild(texture);
-  evilguy.texture = texture; // store a reference for easier access
-  evilguy.x = msg.x;
-  evilguy.y = msg.y;
-
-  bullets[msg.id] = evilguy;
-  container.addChild(evilguy);
-}
-
 socket.on('bullet', function(msg) {
-  if (!bullets[msg.id]) {
+  if (!entities[msg.id]) {
     console.log('NEW BULLET');
-    newbullet(msg);
+    newEntity(msg);
 
     shootSound.play();
   } else {
-    let bullet = bullets[msg.id];
+    let bullet = entities[msg.id];
     bullet.x = msg.x;
     bullet.y = msg.y;
   }
