@@ -56,32 +56,6 @@ io.on('connection', function(socket) {
   });
 });
 
-function checkPlatformsEnemy(enemy) {
-  onGround = false;
-  map.forEach(rect => {
-    if (rect.tile == 1 &&
-        enemy.getY() >= rect.y - enemy.getHeight() &&
-        enemy.getY() <= rect.y + rect.height - enemy.getHeight() &&
-        enemy.getX() >= rect.x - enemy.getWidth() + 5 &&	// fall of on left side
-        enemy.getX() <= rect.x + rect.width - 5 ) {	// fall of on right side
-        enemy.setYvel(0);
-      enemy.setOnGround(true);
-      onGround = true;
-      enemy.setY(rect.y - enemy.getHeight());
-    }
-  });
-  if (!onGround) {
-    enemy.setOnGround(false);
-  }
-}
-
-function verticalMovementEnemy(enemy) {
-  if (!enemy.isOnGround()) {
-    enemy.setY(enemy.getY() + 1);
-  }
-}
-
-
 function gameLoop() {
   Object.keys(players).forEach(key => {
     let player = players[key];
@@ -99,11 +73,9 @@ function gameLoop() {
     }
   });
 
-  bug.move();
-  checkPlatformsEnemy(bug);
-  verticalMovementEnemy(bug);
+  bug.move(map);
 }
 
-var bug = new enemy.Ladybug(0, 750, 100);
+var bug = new enemy.Ladybug(111, 750, 100);
 setInterval(gameLoop, 16);
 

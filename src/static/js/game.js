@@ -101,8 +101,6 @@ function moveCamera() {
   camtrapg.x = camtrap.x;
 }
 
-var enemies = [];
-var bullets = [];
 var entities = [];
 var myid;
 
@@ -166,31 +164,6 @@ socket.on('entityPos', function (msg) {
 
   if (msg.id === myid) {
     moveCamera();
-  }
-});
-
-function newenemy(msg) {
-  let evilguy = new PIXI.Container();
-
-  //var texture = PIXI.Texture.fromImage("img/bunny_gun.png");
-  let texture = new PIXI.Sprite(PIXI.Texture.fromImage(msg.texture));
-  evilguy.addChild(texture);
-  evilguy.texture = texture; // store a reference for easier access
-  evilguy.x = msg.x;
-  evilguy.y = msg.y;
-
-  enemies[msg.id] = evilguy;
-  container.addChild(evilguy);
-}
-
-socket.on('enemy', function(msg) {
-  if (!enemies[msg.id]) {
-    console.log('NEW ENEMY');
-    newenemy(msg);
-  } else {
-    let enemy = enemies[msg.id];
-    enemy.x = msg.x;
-    enemy.y = msg.y;
   }
 });
 
