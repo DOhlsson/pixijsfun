@@ -76,7 +76,7 @@ container.addChild(camtrapg);
 console.log('CAMTRAPG', camtrapg.y, camtrapg.position.y);
 
 function moveCamera() {
-  var mybunny = bunnys[myid];
+  var mybunny = entities[myid];
   var scrollvel = 10;
 
   // horizontal scroll
@@ -101,24 +101,10 @@ function moveCamera() {
   camtrapg.x = camtrap.x;
 }
 
-var bunnys = [];
 var enemies = [];
 var bullets = [];
+var entities = [];
 var myid;
-
-function newbunny(msg) {
-  console.log('socket.id', socket.id);
-  let newguy = new PIXI.Container();
-  let bunny = new PIXI.Sprite(bunny_texture);
-  newguy.addChild(bunny);
-  newguy.bunny = bunny; // store a reference for easier access
-  newguy.x = msg.x;
-  newguy.y = msg.y;
-  //newguy.anchor.x = 0.5;
-
-  bunnys[msg.id] = newguy;
-  container.addChild(newguy);
-}
 
 socket.on('connect', function () {
   myid = socket.id;
@@ -141,21 +127,43 @@ socket.on('sendMap', function (map) {
   });
 });
 
+socket.on('createEntity', function (msg) {
+  newEntity(msg);
 
-socket.on('coords', function (msg) {
-  if (!bunnys[msg.id]) {
+  if (msg.id === myid) {
+    moveCamera();
+  }
+});
+
+
+function newEntity(msg) {
+  let entity = new PIXI.Container();
+
+  let tmpTexture = new PIXI.Sprite(PIXI.Texture.fromImage(msg.texture));
+  entity.addChild(tmpTexture);
+  entity.texture = tmpTexture; // store a reference for easier access
+  entity.x = msg.x;
+  entity.y = msg.y;
+
+  entities[msg.id] = entity;
+  container.addChild(entity);
+}
+
+socket.on('entityPos', function (msg) {
+  if (!entities[msg.id]) {
     console.log('NEW BUNNY');
-    newbunny(msg);
+    newEntity(msg);
   } else {
-    let bunny = bunnys[msg.id];
-    bunny.x = msg.x;
-    bunny.y = msg.y;
+    let entity = entities[msg.id];
+    entity.x = msg.x;
+    entity.y = msg.y;
     // bunny.bunny is the sprite inside the container
     // we flip it with scale.x = 1 or -1
     // and change the x offset of the sprite inside the container
-    bunny.bunny.scale.x = msg.facing;
-    bunny.bunny.x = msg.facing === 1 ? 0 : 26;
+    entity.texture.scale.x = msg.facing;
+    entity.texture.x = msg.facing === 1 ? 0 : 26;
   }
+
   if (msg.id === myid) {
     moveCamera();
   }
@@ -164,7 +172,7 @@ socket.on('coords', function (msg) {
 function newenemy(msg) {
   let evilguy = new PIXI.Container();
 
-  //var bunny_texture = PIXI.Texture.fromImage("img/bunny_gun.png");
+  //var texture = PIXI.Texture.fromImage("img/bunny_gun.png");
   let texture = new PIXI.Sprite(PIXI.Texture.fromImage(msg.texture));
   evilguy.addChild(texture);
   evilguy.texture = texture; // store a reference for easier access

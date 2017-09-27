@@ -1,4 +1,6 @@
-/*jshint esversion: 6 */
+/* jshint esversion: 6 */
+
+const io = require('./index');
 
 class Entity {
   constructor(id, x, y, texture, height, width) {
@@ -8,6 +10,8 @@ class Entity {
     this.texture = texture;
     this.height = height;
     this.width = width;
+    this.hitpoints = 1;
+    this.facing = 1;
   }
 
   getId() {
@@ -56,6 +60,57 @@ class Entity {
 
   setWidth(width) {
     this.width = width;
+  }
+
+  setHitpoints(hitpoints) {
+    this.hitpoints = hitpoints;
+  }
+
+  getHitpoints() {
+    return this.hitpoints;
+  }
+
+  setFacing(facing) {
+    this.facing = facing;
+  }
+
+  getFacing() {
+    return this.facing;
+  }
+
+  /*
+   * Tells clients to render a new enitity
+   */
+  emitCreate() {
+    io.emit('createEntity', {
+      id: this.id,
+      x: this.x,
+      y: this.y,
+      texture: this.texture,
+      facing: this.facing
+    });
+  }
+
+  /*
+   * Lets clients know the new position of an entity
+   */
+  emitPosition() {
+    io.emit('entityPos', {
+      id: this.id,
+      x: this.x,
+      y: this.y,
+      texture: this.texture,
+      facing: this.facing
+    });
+  }
+
+  /*
+   * Tells clients to destroy an entity
+   */
+  emitDestroy() {
+    io.emit('destroyEnity', {
+      id: this.id
+    });
   }
 }
 
