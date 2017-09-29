@@ -28,6 +28,7 @@ const spawn = {
 const entityManager = new EntityManager();
 
 const map = mapgen();
+const locks = [];
 
 // New connection
 io.on('connection', function(socket) {
@@ -65,24 +66,33 @@ io.on('connection', function(socket) {
 
 function gameLoop() {
   Object.keys(entityManager.getEntities()).forEach(key => {
-    let entity = entityManager.getEntities()[key];
-    if(entity.delete) {
-      entityManager.deleteEntity(key);
-    }
+    setTimeout ( function() {
+      while(locks[key] !== undefined);
+      locks[key] = true;
 
-    let col = entityManager.getCollision(entity);
-    if(col !== undefined) {
-      if(col.constructor.name === 'Ladybug' && entity.constructor.name === 'Bullet') {
-        console.log('Killed ladybug');
-        col.emitDestroy();
-        entity.emitDestroy();
-        col.delete = true;
-        entity.delete = true;
+      let entity = entityManager.getEntities()[key];
+      if(entity === undefined) {
+        entityManager.deleteEntity(key);
+      } else {
+        if(entity.delete) {
+          entityManager.deleteEntity(key);
+        }
+
+        let col = entityManager.getCollision(entity);
+        if(col !== undefined) {
+          if(col.constructor.name === 'Ladybug' && entity.constructor.name === 'Bullet') {
+            col.emitDestroy();
+            entity.emitDestroy();
+            col.delete = true;
+            entity.delete = true;
+          }
+        }
+        if (!entity.delete) {
+          entity.move(map);
+        }
       }
-    }
-    if (!entity.delete) {
-      entity.move(map);
-    }
+      delete locks[key];
+    }, 50);
   });
 }
 

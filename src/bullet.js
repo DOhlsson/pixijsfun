@@ -2,6 +2,7 @@
 
 const io = require('./index');
 const entity = require('./entity');
+const networking = require('./networking');
 
 class Bullet extends entity.Entity {
   constructor(id, x, y, xvel) {
@@ -22,7 +23,8 @@ class Bullet extends entity.Entity {
   }
 
   emitCoords() {
-    io.emit('bullet', {
+    networking.addPackage({
+      type: "bullet",
       id: this.id,
       x: this.x,
       y: this.y,

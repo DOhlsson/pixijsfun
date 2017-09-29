@@ -1,4 +1,4 @@
-/*jshint esversion: 6 */ 
+/* jshint esversion: 6 */ 
 
 var socket = io();
 var app = new PIXI.Application({backgroundColor : 0x1099bb});
@@ -142,13 +142,13 @@ socket.on('sendMap', function (map) {
   });
 });
 
-socket.on('createEntity', function (msg) {
+function entityCreate(msg) {
   newEntity(msg);
 
   if (msg.id === myid) {
     moveCamera();
   }
-});
+}
 
 
 function newEntity(msg) {
@@ -164,7 +164,7 @@ function newEntity(msg) {
   container.addChild(entities[msg.id]);
 }
 
-socket.on('entityPos', function (msg) {
+function entityPos(msg) {
   if (!entities[msg.id]) {
     console.log('NEW BUNNY');
     newEntity(msg);
@@ -182,11 +182,10 @@ socket.on('entityPos', function (msg) {
   if (msg.id === myid) {
     moveCamera();
   }
-});
+}
 
-socket.on('bullet', function(msg) {
+function bullet(msg) {
   if (!entities[msg.id]) {
-    console.log('NEW BULLET');
     newEntity(msg);
 
     shootSound.play();
@@ -195,14 +194,34 @@ socket.on('bullet', function(msg) {
     bullet.x = msg.x;
     bullet.y = msg.y;
   }
-});
+}
 
-socket.on('destroyEntity', function(msg) {
+function entityDestroy(msg) {
     if(entities[msg.id] !== undefined) {
       container.removeChild(entities[msg.id]);
       entities[msg.id] = null;
     }
+}
+
+socket.on('entities', function(msg) {
+  msg.queue.forEach(parsePackage);
 });
+
+function parsePackage(msg) {
+  setTimeout ( function() {
+  if(msg.type === "create") {
+    entityCreate(msg);
+  } else if(msg.type === "pos") {
+    entityPos(msg);
+  } else if(msg.type === "destroy") {
+    entityDestroy(msg);
+  } else if(msg.type === "bullet") {
+    bullet(msg);
+  } else {
+    console.log('Error, unknown package: ', msg);
+  }
+  });
+}
 
 function keyboard(keyCode) {
   var key = {};

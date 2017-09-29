@@ -1,6 +1,7 @@
 /* jshint esversion: 6 */
 
 const io = require('./index');
+const networking = require('./networking');
 
 class Entity {
   constructor(id, x, y, texture, height, width) {
@@ -83,7 +84,8 @@ class Entity {
    * Tells clients to render a new enitity
    */
   emitCreate() {
-    io.emit('createEntity', {
+    networking.addPackage({
+      type: "create",
       id: this.id,
       x: this.x,
       y: this.y,
@@ -96,7 +98,8 @@ class Entity {
    * Lets clients know the new position of an entity
    */
   emitPosition() {
-    io.emit('entityPos', {
+    networking.addPackage({
+      type: "pos",
       id: this.id,
       x: this.x,
       y: this.y,
@@ -109,7 +112,8 @@ class Entity {
    * Tells clients to destroy an entity
    */
   emitDestroy() {
-    io.emit('destroyEntity', {
+    networking.addPackage({
+      type: "destroy",
       id: this.id
     });
   }
