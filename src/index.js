@@ -74,11 +74,15 @@ function gameLoop() {
     if(col !== undefined) {
       if(col.constructor.name === 'Ladybug' && entity.constructor.name === 'Bullet') {
         console.log('Killed ladybug');
+        col.emitDestroy();
+        entity.emitDestroy();
         col.delete = true;
         entity.delete = true;
       }
     }
-    entity.move(map);
+    if (!entity.delete) {
+      entity.move(map);
+    }
   });
 }
 

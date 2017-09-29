@@ -161,7 +161,7 @@ function newEntity(msg) {
   entity.y = msg.y;
 
   entities[msg.id] = entity;
-  container.addChild(entity);
+  container.addChild(entities[msg.id]);
 }
 
 socket.on('entityPos', function (msg) {
@@ -195,6 +195,13 @@ socket.on('bullet', function(msg) {
     bullet.x = msg.x;
     bullet.y = msg.y;
   }
+});
+
+socket.on('destroyEntity', function(msg) {
+    if(entities[msg.id] !== undefined) {
+      container.removeChild(entities[msg.id]);
+      entities[msg.id] = null;
+    }
 });
 
 function keyboard(keyCode) {

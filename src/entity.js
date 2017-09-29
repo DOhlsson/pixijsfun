@@ -109,7 +109,7 @@ class Entity {
    * Tells clients to destroy an entity
    */
   emitDestroy() {
-    io.emit('destroyEnity', {
+    io.emit('destroyEntity', {
       id: this.id
     });
   }

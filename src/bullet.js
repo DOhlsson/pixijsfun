@@ -29,15 +29,6 @@ class Bullet extends entity.Entity {
       texture: this.texture
     });
   }
-
-  emitDestroy() {
-    io.emit('bullet', {
-      id: this.id,
-      x: 0,
-      y: 0,
-      texture: this.texture
-    });
-  }
 }
 
 module.exports = {
