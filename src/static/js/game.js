@@ -12,6 +12,15 @@ fullWindow();
 window.onresize = fullWindow;
 
 document.body.appendChild(app.view);
+document.addEventListener('mousedown', function (e) {
+  console.log('mousedown', e);
+});
+document.addEventListener('mouseup', function (e) {
+  console.log('mouseup', e);
+});
+document.addEventListener('click', function (e) {
+  console.log('click', e);
+});
 
 var bunny_texture = PIXI.Texture.fromImage("img/bunny_gun.png");
 
