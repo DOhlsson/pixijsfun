@@ -1,7 +1,15 @@
 /*jshint esversion: 6 */ 
 
 var socket = io();
-var app = new PIXI.Application(800, 600, {backgroundColor : 0x1099bb});
+var app = new PIXI.Application({backgroundColor : 0x1099bb});
+app.view.className = "rendererView";
+
+function fullWindow () {
+  app.renderer.resize(window.innerWidth, window.innerHeight);
+}
+
+fullWindow();
+window.onresize = fullWindow;
 
 document.body.appendChild(app.view);
 
