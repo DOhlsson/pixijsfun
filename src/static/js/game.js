@@ -190,10 +190,6 @@ socket.on('bullet', function(msg) {
 
 socket.on('destroyEntity', function(msg) {
     if(entities[msg.id] !== undefined) {
-      console.log('destroyEntity ', msg.id);
-      //entities[msg.id].destroy({texture:true, baseTexture:true});
-      /*trash = []
-      trash.push(entities[msg.id])*/
       container.removeChild(entities[msg.id]);
       entities[msg.id] = null;
     }
