@@ -80,7 +80,9 @@ function gameLoop() {
         entity.delete = true;
       }
     }
-    entity.move(map);
+    if (!entity.delete) {
+      entity.move(map);
+    }
   });
 }
 
