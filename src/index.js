@@ -8,7 +8,8 @@ const enemy = require('./enemy');
 const bullet = require('./bullet');
 const Player = require('./player');
 const mapgen = require('./mapgen');
-const EntityManager = require('./entityManager.js');
+const EntityManager = require('./entityManager');
+const Grenade = require('./grenade');
 
 app.get('/', function(req, res){
   res.sendFile('index.html', { root: __dirname + "/static" } );
@@ -49,6 +50,11 @@ io.on('connection', function(socket) {
   socket.on('shoot', function(owner) {
     let bulletId = entityManager.getFreeId();
     entityManager.addEntity(bulletId, new bullet.Bullet(bulletId, player.x, player.y+7, player.facing*10, owner));
+  });
+
+  socket.on('grenade', function(owner) {
+    let grenadeId = entityManager.getFreeId();
+    entityManager.addEntity(grenadeId, new Grenade(grenadeId, player.x, player.y+7, player.facing*10, owner));
   });
 
   socket.on('spawnBugs', function(x) {

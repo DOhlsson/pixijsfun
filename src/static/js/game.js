@@ -31,7 +31,8 @@ let rocket_frames = [];
 let spHead_frames = [];
 
 sounds.load([
-  'sound/40_smith_wesson_single-mike-koenig.mp3'
+  'sound/40_smith_wesson_single-mike-koenig.mp3',
+  'sound/Grenade-SoundBible.com-1777900486.mp3'
 ]);
 
 var shootSound = sounds["sound/40_smith_wesson_single-mike-koenig.mp3"];
@@ -254,10 +255,16 @@ function parsePackage(msg) {
     entityDestroy(msg);
   } else if(msg.type === "bullet") {
     bullet(msg);
+  } else if(msg.type === "sound") {
+    playSound(msg);
   } else {
     console.log('Error, unknown package: ', msg);
   }
   });
+}
+
+function playSound(msg) {
+  sounds[msg.file].play();
 }
 
 function keyboard(keyCode) {
@@ -302,7 +309,8 @@ document.addEventListener('DOMContentLoaded', function () {
       moveLeft = keyboard(KEY_LEFT),
       moveRight = keyboard(KEY_RIGHT),
       shoot = keyboard(KEY_CTRL),
-      spawnBugs = keyboard(KEY_Q);
+      spawnBugs = keyboard(KEY_q),
+      throwGrenade = keyboard(KEY_g);
 
   jump.press = function() {
     socket.emit('jump', undefined);
@@ -336,4 +344,7 @@ document.addEventListener('DOMContentLoaded', function () {
     socket.emit('spawnBugs', camtrap.x);
   };
 
+  throwGrenade.press = function() {
+    socket.emit('grenade', myid);
+  };
 });
