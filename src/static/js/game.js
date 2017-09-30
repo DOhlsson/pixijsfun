@@ -12,14 +12,23 @@ fullWindow();
 window.onresize = fullWindow;
 
 document.body.appendChild(app.view);
-document.addEventListener('mousedown', function (e) {
-  console.log('mousedown', e);
-});
-document.addEventListener('mouseup', function (e) {
-  console.log('mouseup', e);
-});
+
+//document.addEventListener('mousedown', function (e) {
+//  console.log('mousedown', e);
+//});
+//document.addEventListener('mouseup', function (e) {
+//  console.log('mouseup', e);
+//});
 document.addEventListener('click', function (e) {
   console.log('click', e);
+  let click = {
+    x: Math.floor((e.clientX - container.x)/21)*21,
+    y: Math.floor((e.clientY - container.y)/21)*21,
+    width: 21,
+    height: 21,
+    tile: 1
+  };
+  socket.emit('newTile', click);
 });
 
 var bunny_texture = PIXI.Texture.fromImage("img/bunny_gun.png");
