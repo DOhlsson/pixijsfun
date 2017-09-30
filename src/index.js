@@ -62,6 +62,11 @@ io.on('connection', function(socket) {
     console.log('disconnect', socket.id);
     entityManager.deleteEntity(id);
   });
+
+  socket.on('newTile', function(newTile) {
+    map.push(newTile);
+    socket.emit('sendMap', [newTile]);
+  });
 });
 
 function gameLoop() {
