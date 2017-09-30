@@ -118,6 +118,41 @@ function moveCamera() {
   camtrapg.x = camtrap.x;
 }
 
+//Create the health bar
+var healthBar = new PIXI.Container();
+healthBar.position.set(10, 10);
+container.addChild(healthBar);
+
+//Create the black background rectangle
+var innerBar = new PIXI.Graphics();
+innerBar.beginFill(0x000000);
+innerBar.drawRect(0, 0, 40, 8);
+innerBar.endFill();
+healthBar.addChild(innerBar);
+
+//Create the front red rectangle
+var outerBar = new PIXI.Graphics();
+outerBar.beginFill(0xff3300);
+outerBar.drawRect(0, 0, 40, 8);
+outerBar.endFill();
+healthBar.addChild(outerBar);
+
+healthBar.outer = outerBar;
+healthBar.inner = innerBar;
+
+socket.on('hp', function(hp) {
+  console.log('HP=', hp);
+  healthBar.outer.width = hp * healthBar.inner.width;
+});
+
+function moveHealthBar(x ,y) {
+  healthBar.inner.position.x = x-16;
+  healthBar.inner.position.y = y-22;
+  healthBar.outer.position.x = x-16;
+  healthBar.outer.position.y = y-22;
+
+}
+
 var entities = [];
 var myid;
 
@@ -146,6 +181,7 @@ function entityCreate(msg) {
   newEntity(msg);
 
   if (msg.id === myid) {
+    moveHealthBar(msg.x, msg.y);
     moveCamera();
   }
 }
@@ -180,6 +216,7 @@ function entityPos(msg) {
   }
 
   if (msg.id === myid) {
+    moveHealthBar(msg.x, msg.y);
     moveCamera();
   }
 }
@@ -292,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   shoot.press = function() {
-    socket.emit('shoot', undefined);
+    socket.emit('shoot', myid);
   };
 
   spawnBugs.press = function() {

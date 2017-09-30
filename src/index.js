@@ -35,7 +35,7 @@ io.on('connection', function(socket) {
   socket.emit('sendMap', map);
 
   let id = socket.id;
-  entityManager.addEntity(id, new Player.Player(id, spawn.x, spawn.y));
+  entityManager.addEntity(id, new Player.Player(id, spawn.x, spawn.y, socket));
   let player = entityManager.getEntity(id);
 
   socket.on('move', function(msg) {
@@ -46,9 +46,9 @@ io.on('connection', function(socket) {
     player.jump();
   });
 
-  socket.on('shoot', function() {
+  socket.on('shoot', function(owner) {
     let bulletId = entityManager.getFreeId();
-    entityManager.addEntity(bulletId, new bullet.Bullet(bulletId, player.x, player.y+7, player.facing*10));
+    entityManager.addEntity(bulletId, new bullet.Bullet(bulletId, player.x, player.y+7, player.facing*10, owner));
   });
 
   socket.on('spawnBugs', function(x) {
@@ -78,15 +78,11 @@ function gameLoop() {
           entityManager.deleteEntity(key);
         }
 
-        let col = entityManager.getCollision(entity);
+        /*let col = entityManager.getCollision(entity);
         if(col !== undefined) {
-          if(col.constructor.name === 'Ladybug' && entity.constructor.name === 'Bullet') {
-            col.emitDestroy();
-            entity.emitDestroy();
-            col.delete = true;
-            entity.delete = true;
-          }
-        }
+          entity.takeDamage(col.damage);
+          col.takeDamage(entity.damage);
+        }*/
         if (!entity.delete) {
           entity.move(map);
         }

@@ -2,6 +2,7 @@
 
 const io = require('./index');
 const networking = require('./networking');
+const EntityManager = require('./entityManager.js');
 
 class Entity {
   constructor(id, x, y, texture, height, width) {
@@ -14,6 +15,8 @@ class Entity {
     this.hitpoints = 1;
     this.facing = 1;
     this.delete = false;
+    this.damage = 0;
+    this.entityManager = new EntityManager();
   }
 
   getId() {
@@ -78,6 +81,22 @@ class Entity {
 
   getFacing() {
     return this.facing;
+  }
+
+  die() {
+    this.emitDestroy();
+    this.delete = true;
+  }
+
+  takeDamage(dmg) {
+    this.hitpoints -= dmg;
+    if(this.hitpoints <= 0 ) {
+      this.die();
+    }
+  }
+
+  getCollision() {
+    return this.entityManager.getCollision(this);
   }
 
   /*

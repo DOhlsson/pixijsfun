@@ -17,6 +17,7 @@ class Ladybug extends Enemy {
 
     this.startx = x;
     this.patrol = 1;
+    this.damage = 10;
   }
 
   move(map) {
@@ -29,10 +30,16 @@ class Ladybug extends Enemy {
       this.patrol = 1;
     }
 
-    this.x += this.patrol;
-
     this.checkPlatforms(map);
     this.emitPosition();
+
+    let col = this.getCollision();
+    if(col !== undefined && col.constructor.name !== 'Ladybug') {
+      col.takeDamage(this.damage);
+      this.die();
+    }
+
+    this.x += this.patrol;
   }
 }
 
