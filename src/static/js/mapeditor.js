@@ -1,3 +1,5 @@
+/* jshint esversion: 6 */
+
 let editmode = false;
 let dragstart;
 
@@ -9,11 +11,11 @@ function toggleEditMode() {
   editmode = !editmode;
   console.log('Edit mode:', editmode);
   mapeditor_target.visible = editmode;
-};
+}
 
 function tileCoord(n) {
   return Math.floor(n/21)*21;
-};
+}
 
 function dragsquare(e) {
   let stopx = tileCoord(e.clientX - container.x);
@@ -24,13 +26,13 @@ function dragsquare(e) {
     width: 21 + Math.abs(tileCoord(dragstart.x - stopx)),
     height: 21 + Math.abs(tileCoord(dragstart.y - stopy))
   };
-};
+}
 
 function drawTargetRect(rect) {
   mapeditor_target.clear();
   mapeditor_target.lineStyle(2, 0x444444);
   mapeditor_target.drawRect(rect.x, rect.y, rect.width, rect.height);
-};
+}
 
 // Prevent right-click menu from appearing
 window.oncontextmenu = function (e) {
@@ -56,7 +58,7 @@ document.addEventListener('mousedown', function (e) {
     dragstart = {
       x: tileCoord(e.clientX - container.x),
       y: tileCoord(e.clientY - container.y)
-    }
+    };
   } else if (editmode && e.which === 3) {
     e.preventDefault();
     console.log('mousedown', e);
