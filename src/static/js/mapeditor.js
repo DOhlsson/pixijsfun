@@ -2,7 +2,7 @@
 
 let editmode = false;
 let textureSelectMode = false;
-let textureSelection = 123;
+var textureSelection = 123;
 let dragstart;
 
 let mapeditor_target = new PIXI.Graphics();

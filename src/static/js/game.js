@@ -3,6 +3,7 @@
 var socket = io();
 var app = new PIXI.Application({backgroundColor : 0x1099bb});
 app.view.className = "rendererView";
+var textureSelection;
 
 function fullWindow () {
   app.renderer.resize(window.innerWidth, window.innerHeight);
