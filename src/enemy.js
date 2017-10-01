@@ -2,6 +2,7 @@
 
 const io = require('./index');
 const character = require('./character');
+const entityManager = require('./entityManager');
 
 class Enemy extends character.Character {
   constructor(id, x, y, texture) {
@@ -22,7 +23,6 @@ class Ladybug extends Enemy {
 
   move(map) {
     this.verticalMovement();
-    //this.horizontalMovement();
 
     if(this.x > this.startx+300) {
       this.patrol = -1;
@@ -34,9 +34,13 @@ class Ladybug extends Enemy {
     this.emitPosition();
 
     let col = this.getCollision();
-    if(col !== undefined && col.constructor.name !== 'Ladybug') {
-      col.takeDamage(this.damage);
-      this.die();
+    if(col.length > 0 && col.constructor.name !== 'Ladybug') {
+      for(let i = 0; i < col.length; i++) {
+        if(col[i].constructor.name !== this.constructor.name) {
+          col[i].takeDamage(this.damage);
+          this.die();
+        }
+      }
     }
 
     this.x += this.patrol;

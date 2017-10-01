@@ -11,6 +11,8 @@ class Bullet extends entity.Entity {
     this.range = this.x + xvel * 400;
     this.damage = 5;
     this.owner = owner;
+    this.width = 2;
+    this.height = 2;
   }
 
   move(map) {
@@ -18,9 +20,12 @@ class Bullet extends entity.Entity {
     this.emitCoords();
 
     let col = this.getCollision();
-    if(col !== undefined && this.owner !== col.id) {
-      col.takeDamage(this.damage);
-      this.die();
+    if(col.length > 0) {
+      for(let i = 0;  i < col.length; i++)
+        if(col[i].id !== this.owner) {
+          col[i].takeDamage(this.damage);
+          this.die();
+        }
     }
 
     if((this.range < 0 && this.x < this.range) ||

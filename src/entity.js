@@ -2,7 +2,7 @@
 
 const io = require('./index');
 const networking = require('./networking');
-const EntityManager = require('./entityManager.js');
+const entityManager = require('./entityManager.js');
 
 class Entity {
   constructor(id, x, y, texture, height, width) {
@@ -16,7 +16,6 @@ class Entity {
     this.facing = 1;
     this.delete = false;
     this.damage = 0;
-    this.entityManager = new EntityManager();
   }
 
   getId() {
@@ -96,11 +95,11 @@ class Entity {
   }
 
   getCollision() {
-    return this.entityManager.getCollision(this);
+    return entityManager.getCollisionsAsArray(this);
   }
 
   /*
-   * Tells clients to render a new enitity
+   * Tells clients to render a new entity
    */
   emitCreate() {
     networking.addPackage({

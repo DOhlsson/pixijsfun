@@ -1,48 +1,100 @@
 /* jshint esversion: 6 */
 
+const collision = require('./collision');
+
 const entities = {};
+var nextId = 0;
 
-module.exports = class EntityManager {
-  constructor() {
-    this.nextId = 0;
+/*
+ * Returns the next used entity id
+ *
+ * @return Number
+ */
+function getFreeId() {
+  while(entities[nextId] !== undefined) {
+    nextId++;
   }
+  return nextId++;
+}
 
-  getFreeId() {
-    while(entities[this.nextId] !== undefined) {
-      this.nextId++;
-    }
-    return this.nextId++;
-  }
+/*
+ * Get entity by id
+ *
+ * @param: Number id
+ * @return: Entity
+ */
+function getEntityById(id) {
+  return entities[id];
+}
 
-  getEntity(id) {
-    return entities[id];
-  }
+/*
+ * Get all entities
+ *
+ * @return Object
+ */
+function getEntities() {
+  return entities;
+}
 
-  getEntities() {
-    return entities;
-  }
+/*
+ * Adds any entity to position of id
+ *
+ * @param Number id
+ * @param Entity entity
+ */
+function addEntity(id, entity) {
+  entities[id] = entity;
+}
 
-  addEntity(id, e) {
-    entities[id] = e;
-  }
+/*
+ * Delete an entity by id
+ *
+ * @param Number id
+ */
+function deleteEntityById(id) {
+  delete entities[id];
+}
 
-  deleteEntity(id) {
-    delete entities[id];
-  }
+/*
+ * Returns all collisions as an array
+ *
+ * @param Entity entity
+ * @return [Entity]
+ */
+function getCollisionsAsArray(entity) {
+  let collisions = [];
+  let rectSource = {
+    x: entity.x,
+    y: entity.y,
+    width: entity.width,
+    height: entity.height
+  };
 
-  getCollision(obj) {
-    let retn;
+  Object.keys(entities).forEach(key => {
+    let e = entities[key];
+    if(e.id !== entity.id) {
+      let rectTarget = {
+        x: e.x,
+        y: e.y,
+        width: e.width,
+        height: e.height
+      };
 
-    Object.keys(entities).forEach(key => {
-      let e = entities[key];
-      if( (obj.x >= e.x && obj.x <= e.x+e.width) &&
-          (obj.y >= e.y && obj.y <= e.y+e.height) &&
-        e !== obj && retn === undefined) {
-        retn = e;
+      if(collision.isRectCollision(rectSource, rectTarget)) {
+        collisions.push(e);
       }
-    });
+    }
+  });
 
-    return retn;
-  }
+  return collisions;
+}
+
+module.exports = {
+  getFreeId: getFreeId,
+  getEntityById: getEntityById,
+  getEntities: getEntities,
+  addEntity: addEntity,
+  deleteEntityById: deleteEntityById,
+  getCollisionsAsArray: getCollisionsAsArray
 };
 

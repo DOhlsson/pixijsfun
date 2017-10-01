@@ -8,7 +8,7 @@ const enemy = require('./enemy');
 const bullet = require('./bullet');
 const Player = require('./player');
 const mapgen = require('./mapgen');
-const EntityManager = require('./entityManager');
+const entityManager = require('./entityManager');
 const Grenade = require('./grenade');
 
 app.get('/', function(req, res){
@@ -26,8 +26,6 @@ const spawn = {
   y: 200
 };
 
-const entityManager = new EntityManager();
-
 const map = mapgen();
 const locks = {};
 
@@ -37,7 +35,7 @@ io.on('connection', function(socket) {
 
   let id = socket.id;
   entityManager.addEntity(id, new Player.Player(id, spawn.x, spawn.y, socket));
-  let player = entityManager.getEntity(id);
+  let player = entityManager.getEntityById(id);
 
   socket.on('move', function(msg) {
     player.changeDirection(msg);
@@ -66,7 +64,7 @@ io.on('connection', function(socket) {
 
   socket.on('disconnect', function() {
     console.log('disconnect', socket.id);
-    entityManager.deleteEntity(id);
+    entityManager.deleteEntityById(id);
   });
 
   socket.on('newTile', function(newTile) {
@@ -83,17 +81,12 @@ function gameLoop() {
 
       let entity = entityManager.getEntities()[key];
       if(entity === undefined) {
-        entityManager.deleteEntity(key);
+        entityManager.deleteEntityById(key);
       } else {
         if(entity.delete) {
-          entityManager.deleteEntity(key);
+          entityManager.deleteEntityById(key);
         }
 
-        /*let col = entityManager.getCollision(entity);
-        if(col !== undefined) {
-          entity.takeDamage(col.damage);
-          col.takeDamage(entity.damage);
-        }*/
         if (!entity.delete) {
           entity.move(map);
         }

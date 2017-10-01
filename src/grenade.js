@@ -3,6 +3,7 @@
 const io = require('./index');
 const entity = require('./entity');
 const networking = require('./networking');
+const entityManager = require('./entityManager.js');
 
 module.exports = class Grenade extends entity.Entity {
   constructor(id, x, y, xvel, owner) {
@@ -46,11 +47,15 @@ module.exports = class Grenade extends entity.Entity {
     this.height = 50;
     this.width = 50;
     let col = this.getCollision();
-    if(col !== undefined && this.owner !== col.id) {
-      col.takeDamage(this.damage);
+    if(col.length > 0) {
+      for(let i = 0; i < col.length; i++) {
+        if(col[i].id !== this.owner) {
+          col[i].takeDamage(this.damage);
+        }
+      }
     }
 
-    if((this.range < 0 && this.x < this.range) ||
+   if((this.range < 0 && this.x < this.range) ||
        this.range > 0 && this.x > this.range) {
       this.explode();
     }
