@@ -10,7 +10,7 @@ function addPackage(pkg) {
 
 function sendPackages() {
   let localQueue = [];
-  p = queue.shift();
+  let p = queue.shift();
   while(p !== undefined) {
     localQueue.push(p);
     p = queue.shift();

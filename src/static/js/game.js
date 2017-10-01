@@ -32,7 +32,7 @@ var shootSound = sounds["sound/40_smith_wesson_single-mike-koenig.mp3"];
 // we move the camera by moving around the container
 // items that are added to app.stage are static on the screen
 // and do not move with the camera
-container = new PIXI.Container();
+let container = new PIXI.Container();
 app.stage.addChild(container);
 
 PIXI.loader.add('img/rocket.json').add('img/spinning_head.json').load(() => {

@@ -1,7 +1,7 @@
 let editmode = false;
 let dragstart;
 
-mapeditor_target = new PIXI.Graphics();
+let mapeditor_target = new PIXI.Graphics();
 mapeditor_target.visible = false;
 container.addChild(mapeditor_target);
 

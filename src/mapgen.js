@@ -1,5 +1,5 @@
 module.exports = function () {
-  map = [{
+  let map = [{
     x: 294,
     y: 294,
     height: 21,
