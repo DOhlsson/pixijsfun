@@ -16,8 +16,7 @@ document.body.appendChild(app.view);
 var bunny_texture = PIXI.Texture.fromImage("img/bunny_gun.png");
 
 var spritesheet = PIXI.BaseTexture.fromImage("img/spritesheet_2.png");
-var ground1 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(72, 95, 21, 21));
-var ground2 = new PIXI.Texture(spritesheet, new PIXI.Rectangle(49, 118, 21, 21));
+
 let rocket_frames = [];
 let spHead_frames = [];
 
@@ -65,6 +64,27 @@ PIXI.loader.add('img/rocket.json').add('img/spinning_head.json').load(() => {
     spHead_animation.y = 60 + Math.round(50*Math.sin(spHead_animation.x/180*Math.PI));
   });
 });
+
+let textures = [];
+let textureSelector = new PIXI.Container();
+textureSelector.visible = false;
+app.stage.addChild(textureSelector);
+for (let j = 0; j < 16; j++) {
+  for (let i = 0; i < 30; i++) {
+    let texture = new PIXI.Texture(spritesheet, new PIXI.Rectangle(3 + 23 * i, 3 + 23 * j, 21, 21));
+
+    let s = new PIXI.Sprite(texture);
+    s.textureNum = textures.length;
+    s.interactive = true;
+    s.on('pointerdown', (e) => {
+      textureSelection = e.target.textureNum;
+    });
+    s.x = 3 + 23 * i;
+    s.y = 3 + 23 * j;
+    textureSelector.addChild(s);
+    textures.push(texture);
+  }
+}
 
 var camtrap = {
   x: 300,
@@ -155,13 +175,8 @@ socket.on('connect', function () {
 socket.on('sendMap', function (map) {
   console.log('gotmap', map);
   map.forEach(rect => {
-    var sprite;
-    if (rect.tile == 2) {
-      sprite = ground2;
-    } else {
-      sprite = ground1;
-    }
-    var tilingSprite = new PIXI.extras.TilingSprite(sprite, rect.width, rect.height);
+    var texture = textures[rect.tile];
+    var tilingSprite = new PIXI.extras.TilingSprite(texture, rect.width, rect.height);
     tilingSprite.position.x = rect.x;
     tilingSprite.position.y = rect.y;
     container.addChild(tilingSprite);
@@ -301,7 +316,8 @@ document.addEventListener('DOMContentLoaded', function () {
       shoot = keyboard(KEY_CTRL),
       mapeditor = keyboard(KEY_e),
       throwGrenade = keyboard(KEY_g),
-      spawnBugs = keyboard(KEY_q);
+      spawnBugs = keyboard(KEY_q),
+      textureSelect = keyboard(KEY_t);
 
   jump.press = function() {
     socket.emit('jump', undefined);
@@ -340,4 +356,6 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   mapeditor.press = toggleEditMode;
+
+  textureSelect.press = toggleTextureSelect;
 });

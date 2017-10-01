@@ -1,6 +1,8 @@
 /* jshint esversion: 6 */
 
 let editmode = false;
+let textureSelectMode = false;
+let textureSelection = 123;
 let dragstart;
 
 let mapeditor_target = new PIXI.Graphics();
@@ -11,6 +13,12 @@ function toggleEditMode() {
   editmode = !editmode;
   console.log('Edit mode:', editmode);
   mapeditor_target.visible = editmode;
+}
+
+function toggleTextureSelect() {
+  textureSelectMode = !textureSelectMode;
+  console.log('Texture Select Mode:', textureSelectMode);
+  textureSelector.visible = textureSelectMode;
 }
 
 function tileCoord(n) {
@@ -68,7 +76,8 @@ document.addEventListener('mousedown', function (e) {
 document.addEventListener('mouseup', function (e) {
   if (editmode && dragstart && e.which === 1) {
     var newTile = dragsquare(e);
-    newTile.tile = 1;
+    newTile.tile = textureSelection;
+    newTile.solid = true;
     socket.emit('newTile', newTile);
     dragstart = false;
     drawTargetRect({

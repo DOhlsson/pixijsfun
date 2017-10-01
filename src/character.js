@@ -85,12 +85,12 @@ class Character extends entity.Entity {
   checkPlatforms(map) {
     let onGround = false;
     map.forEach(rect => {
-      if (rect.tile == 1 &&
+      if (rect.solid &&
           this.y >= rect.y - this.height &&
           this.y <= rect.y + rect.height - this.height &&
           this.x >= rect.x - this.width + 5 &&	// fall of on left side
           this.x <= rect.x + rect.width - 5 ) {	// fall of on right side
-          this.yvel = 0;
+        this.yvel = 0;
         this.onGround = true;
         onGround = true;
         this.y = rect.y - this.height;

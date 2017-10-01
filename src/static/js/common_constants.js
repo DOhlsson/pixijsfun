@@ -18,6 +18,7 @@ const KEY_CTRL = 17;
 const KEY_e = 69;
 const KEY_g = 71;
 const KEY_q = 81;
+const KEY_t = 84;
 
 module.exports = {
   MOVE_LEFT: MOVE_LEFT,
