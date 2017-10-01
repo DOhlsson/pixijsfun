@@ -13,24 +13,6 @@ window.onresize = fullWindow;
 
 document.body.appendChild(app.view);
 
-//document.addEventListener('mousedown', function (e) {
-//  console.log('mousedown', e);
-//});
-//document.addEventListener('mouseup', function (e) {
-//  console.log('mouseup', e);
-//});
-document.addEventListener('click', function (e) {
-  console.log('click', e);
-  let click = {
-    x: Math.floor((e.clientX - container.x)/21)*21,
-    y: Math.floor((e.clientY - container.y)/21)*21,
-    width: 21,
-    height: 21,
-    tile: 1
-  };
-  socket.emit('newTile', click);
-});
-
 var bunny_texture = PIXI.Texture.fromImage("img/bunny_gun.png");
 
 var spritesheet = PIXI.BaseTexture.fromImage("img/spritesheet_2.png");
@@ -289,8 +271,8 @@ function keyboard(keyCode) {
       if (key.isUp && key.press) key.press();
       key.isDown = true;
       key.isUp = false;
+      event.preventDefault();
     }
-    event.preventDefault();
   };
 
   //The `upHandler`
@@ -299,8 +281,8 @@ function keyboard(keyCode) {
       if (key.isDown && key.release) key.release();
       key.isDown = false;
       key.isUp = true;
+      event.preventDefault();
     }
-    event.preventDefault();
   };
 
   //Attach event listeners
@@ -318,8 +300,9 @@ document.addEventListener('DOMContentLoaded', function () {
       moveLeft = keyboard(KEY_LEFT),
       moveRight = keyboard(KEY_RIGHT),
       shoot = keyboard(KEY_CTRL),
-      spawnBugs = keyboard(KEY_q),
-      throwGrenade = keyboard(KEY_g);
+      mapeditor = keyboard(KEY_e),
+      throwGrenade = keyboard(KEY_g),
+      spawnBugs = keyboard(KEY_q);
 
   jump.press = function() {
     socket.emit('jump', undefined);
@@ -356,4 +339,6 @@ document.addEventListener('DOMContentLoaded', function () {
   throwGrenade.press = function() {
     socket.emit('grenade', myid);
   };
+
+  mapeditor.press = toggleEditMode;
 });
