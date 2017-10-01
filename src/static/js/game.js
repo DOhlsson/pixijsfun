@@ -65,6 +65,10 @@ PIXI.loader.add('img/rocket.json').add('img/spinning_head.json').load(() => {
   });
 });
 
+function selectTexture(e) {
+  textureSelection = e.target.textureNum;
+}
+
 let textures = [];
 let textureSelector = new PIXI.Container();
 textureSelector.visible = false;
@@ -76,9 +80,7 @@ for (let j = 0; j < 16; j++) {
     let s = new PIXI.Sprite(texture);
     s.textureNum = textures.length;
     s.interactive = true;
-    s.on('pointerdown', (e) => {
-      textureSelection = e.target.textureNum;
-    });
+    s.on('pointerdown', selectTexture);
     s.x = 3 + 23 * i;
     s.y = 3 + 23 * j;
     textureSelector.addChild(s);
