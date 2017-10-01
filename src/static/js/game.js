@@ -86,7 +86,6 @@ console.log('CAMTRAPG', camtrapg.y, camtrapg.position.y);
 
 function moveCamera() {
   var mybunny = entities[myid];
-  var scrollvel = 10;
 
   // horizontal scroll
   if (mybunny.x + mybunny.width > camtrap.x + camtrap.width) { // scroll right
