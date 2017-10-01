@@ -29,7 +29,7 @@ const spawn = {
 const entityManager = new EntityManager();
 
 const map = mapgen();
-const locks = [];
+const locks = {};
 
 // New connection
 io.on('connection', function(socket) {
