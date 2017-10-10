@@ -5,7 +5,7 @@ var gulp = require('gulp'),
 var jshint = require('gulp-jshint');
 
 var sources = ['src/*.js', 'src/static/js/*.js', '!src/static/js/socket.io.js', '!src/static/js/pixi.js',
-              'test/*.js'];
+               'test/*.js', 'src/**/*.js'];
 
 gulp.task('server', function() {
   if (node) node.kill();

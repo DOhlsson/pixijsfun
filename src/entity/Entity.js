@@ -1,8 +1,8 @@
 /* jshint esversion: 6 */
 
-const io = require('./index');
-const networking = require('./networking');
-const entityManager = require('./entityManager.js');
+const io = require('../index');
+const networking = require('../networking');
+const entityManager = require('../entityManager');
 
 class Entity {
   constructor(id, x, y, texture, height, width) {

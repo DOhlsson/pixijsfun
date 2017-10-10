@@ -1,15 +1,17 @@
-/* jshint esversion: 6 */ 
+/* jshint esversion: 6 */
+
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = module.exports = require('socket.io')(http);
 const constants = require('./static/js/common_constants');
-const enemy = require('./enemy');
-const bullet = require('./bullet');
-const Player = require('./player');
+const enemy = require('./entity/character/enemy/Enemy');
+const bullet = require('./entity/bullet/Bullet');
+const Player = require('./entity/character/player/Player');
 const mapgen = require('./mapgen');
 const entityManager = require('./entityManager');
-const Grenade = require('./grenade');
+const Grenade = require('./entity/grenade/Grenade');
+
 
 app.get('/', function(req, res){
   res.sendFile('index.html', { root: __dirname + "/static" } );

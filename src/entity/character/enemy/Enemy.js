@@ -1,8 +1,8 @@
 /*jshint esversion: 6 */
 
-const io = require('./index');
-const character = require('./character');
-const entityManager = require('./entityManager');
+const io = require('../../../index');
+const character = require('../Character');
+const entityManager = require('../../../entityManager');
 
 class Enemy extends character.Character {
   constructor(id, x, y, texture) {

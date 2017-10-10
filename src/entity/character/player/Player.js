@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 
-const character = require('./character');
+const character = require('../Character');
 
 class Player extends character.Character {
   constructor(id, x, y, socket) {
