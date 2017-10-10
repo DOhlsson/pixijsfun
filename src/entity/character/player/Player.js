@@ -13,7 +13,6 @@ class Player extends character.Character {
     this.socket = socket;
     this.maxhp = 100;
     this.hitpoints = this.maxhp;
-    this.updatehp();
   }
 
   die() {
@@ -21,15 +20,6 @@ class Player extends character.Character {
     this.y = this.spawny;
     this.hitpoints = this.maxhp;
     this.emitPosition();
-  }
-
-  updatehp() {
-    this.socket.emit('hp', this.hitpoints / this.maxhp);
-  }
-
-  takeDamage(dmg) {
-    super.takeDamage(dmg);
-    this.updatehp();
   }
 }
 

@@ -2,6 +2,7 @@
 
 const entity = require('../Entity');
 const constants = require('../../static/js/common_constants');
+const networking = require('../../networking');
 
 const BASE_SPEED = 10;
 
@@ -17,6 +18,7 @@ class Character extends entity.Entity {
     this.onGround = false;
 
     this.emitCreate();
+    this.emitHealthPoints();
   }
 
   getFacing() {
@@ -101,11 +103,34 @@ class Character extends entity.Entity {
     }
   }
 
+  emitHealthPoints() {
+    networking.addPackage({
+      type: "hp",
+      id: this.id,
+      hp: this.hitpoints / this.maxhp
+    });
+  }
+
+
+  takeDamage(dmg) {
+    super.takeDamage(dmg);
+    this.emitPosition();
+    this.emitHealthPoints();
+  }
+
   move(map) {
+    let tmpX = this.x;
+    let tmpY = this.y;
+    let tmpHp = this.hitpoints;
+
     this.verticalMovement();
     this.horizontalMovement();
     this.checkPlatforms(map);
-    this.emitPosition();
+
+    if(tmpX != this.x || tmpY != this.y || tmpHp != this.hitpoints) {
+      this.emitPosition();
+      this.emitHealthPoints();
+    }
   }
 }
 

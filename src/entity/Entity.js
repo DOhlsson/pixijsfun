@@ -12,7 +12,8 @@ class Entity {
     this.texture = texture;
     this.height = height;
     this.width = width;
-    this.hitpoints = 1;
+    this.maxhp = 1;
+    this.hitpoints = this.maxhp;
     this.facing = 1;
     this.delete = false;
     this.damage = 0;
