@@ -7,6 +7,9 @@ var textureSelection;
 
 function fullWindow () {
   app.renderer.resize(window.innerWidth, window.innerHeight);
+  if (textureSelector) {
+    textureSelector.x = window.innerWidth - textureSelector.width;
+  }
 }
 
 fullWindow();
@@ -71,7 +74,7 @@ function selectTexture(e) {
 }
 
 let textures = [];
-let textureSelector = new PIXI.Container();
+var textureSelector = new PIXI.Container();
 textureSelector.visible = false;
 app.stage.addChild(textureSelector);
 for (let j = 0; j < 16; j++) {
@@ -88,6 +91,8 @@ for (let j = 0; j < 16; j++) {
     textures.push(texture);
   }
 }
+
+textureSelector.x = window.innerWidth - textureSelector.width;
 
 var camtrap = {
   x: 300,
@@ -175,6 +180,7 @@ socket.on('connect', function () {
   console.log('myid', myid);
 });
 
+var mapTiles = [];
 socket.on('sendMap', function (map) {
   console.log('gotmap', map);
   map.forEach(rect => {
@@ -183,7 +189,25 @@ socket.on('sendMap', function (map) {
     tilingSprite.position.x = rect.x;
     tilingSprite.position.y = rect.y;
     container.addChild(tilingSprite);
+    mapTiles.push(tilingSprite);
   });
+});
+
+socket.on('delMap', function (delTile) {
+  console.log('delMap', delTile);
+  var newmap = [];
+  mapTiles.forEach((tile, b) => {
+    if (delTile.x <= tile.x && delTile.x + delTile.width >= tile.x + tile.width &&
+        delTile.y <= tile.y && delTile.y + delTile.height >= tile.y + tile.height) {
+      console.log('tile.x', tile.x);
+      console.log('delTile.x', delTile.x);
+      console.log('delTile.width', delTile.width);
+      container.removeChild(tile);
+    } else {
+      newmap.push(tile);
+    }
+  });
+  mapTiles = newmap;
 });
 
 function entityCreate(msg) {

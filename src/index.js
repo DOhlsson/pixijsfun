@@ -28,7 +28,22 @@ const spawn = {
   y: 200
 };
 
-const map = mapgen();
+//const map = mapgen();
+map = [{
+  x: 294,
+  y: 294,
+  height: 21,
+  width: 84,
+  tile: 123,
+  solid: true
+}, {
+  x: 378,
+  y: 273,
+  height: 21,
+  width: 84,
+  tile: 123,
+  solid: true
+}];
 const locks = {};
 
 // New connection
@@ -70,8 +85,53 @@ io.on('connection', function(socket) {
   });
 
   socket.on('newTile', function(newTile) {
-    map.push(newTile);
-    socket.emit('sendMap', [newTile]);
+    let tilesW = newTile.width/21;
+    let tilesH = newTile.height/21;
+    let newtiles = [];
+    for (let i = 0; i < tilesW; i++) {
+      for (let j = 0; j < tilesH; j++) {
+        let pieceTile = {
+          x: newTile.x + i * 21,
+          y: newTile.y + j * 21,
+          width: 21,
+          height: 21,
+          solid: newTile.solid,
+          tile: newTile.tile
+        };
+        newtiles.push(pieceTile);
+        map.push(pieceTile);
+      }
+    }
+
+    socket.emit('sendMap', newtiles);
+  });
+
+  socket.on('delTile', function(delTile) {
+    var prelen = map.length;
+    var del = 0;
+    var delList = [];
+    var newmap = [];
+    map.forEach((tile, i) => {
+      console.log('i', i);
+      if (delTile.x <= tile.x && delTile.x + delTile.width >= tile.x + tile.width &&
+          delTile.y <= tile.y && delTile.y + delTile.height >= tile.y + tile.height) {
+        del++;
+      } else {
+        newmap.push(tile);
+      }
+    });
+    console.log('prelen', prelen);
+    console.log('len', map.length);
+    if (del) {
+      console.log('' + del, 'to delete');
+      socket.emit('delMap', delTile);
+    }
+    map = newmap;
+
+  });
+
+  socket.on('derp', function (msg) {
+    console.log('derp', msg);
   });
 });
 

@@ -62,23 +62,36 @@ document.addEventListener('mousemove', function (e) {
 });
 
 document.addEventListener('mousedown', function (e) {
-  if (editmode && e.which === 1) {
+  console.log('mousedown', e);
+  if (editmode) {
     dragstart = {
       x: tileCoord(e.clientX - container.x),
       y: tileCoord(e.clientY - container.y)
     };
-  } else if (editmode && e.which === 3) {
-    e.preventDefault();
-    console.log('mousedown', e);
   }
+  //if (e.which === 3) {
+  //if (editmode && e.which === 1) {
+  //} else if (editmode && e.which === 3) {
+  //  e.preventDefault();
+  //}
 });
 
 document.addEventListener('mouseup', function (e) {
-  if (editmode && dragstart && e.which === 1) {
-    var newTile = dragsquare(e);
-    newTile.tile = textureSelection;
-    newTile.solid = true;
-    socket.emit('newTile', newTile);
+  console.log('mouseup', e);
+  if (editmode) {
+    let newTile;
+    if (dragstart) {
+      newTile = dragsquare(e);
+    }
+    if (newTile && e.which === 1) {
+      newTile.tile = textureSelection;
+      newTile.solid = true;
+      socket.emit('newTile', newTile);
+    }
+    if (newTile && e.which === 3) {
+      console.log('delTile', newTile);
+      socket.emit('delTile', newTile);
+    }
     dragstart = false;
     drawTargetRect({
       x: tileCoord(e.clientX - container.x),
@@ -88,4 +101,5 @@ document.addEventListener('mouseup', function (e) {
     });
   }
 });
+
 
