@@ -1,8 +1,8 @@
 /* jshint esversion: 6 */
 
-const io = require('./index');
-const entity = require('./entity');
-const networking = require('./networking');
+const io = require('../../index');
+const entity = require('../Entity');
+const networking = require('../../networking');
 
 class Bullet extends entity.Entity {
   constructor(id, x, y, xvel, owner) {

@@ -1,7 +1,7 @@
 /* jshint esversion: 6 */
 
-const entity = require('./entity');
-const constants = require('./static/js/common_constants');
+const entity = require('../Entity');
+const constants = require('../../static/js/common_constants');
 
 const BASE_SPEED = 10;
 

@@ -1,9 +1,9 @@
 /* jshint esversion: 6 */
 
-const io = require('./index');
-const entity = require('./entity');
-const networking = require('./networking');
-const entityManager = require('./entityManager.js');
+const io = require('../../index');
+const entity = require('../Entity');
+const networking = require('../../networking');
+const entityManager = require('../../entityManager');
 
 module.exports = class Grenade extends entity.Entity {
   constructor(id, x, y, xvel, owner) {
