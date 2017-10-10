@@ -19,6 +19,8 @@ class Ladybug extends Enemy {
     this.startx = x;
     this.patrol = 1;
     this.damage = 10;
+    this.maxhp = 100;
+    this.hitpoints = this.maxhp;
   }
 
   move(map) {
@@ -32,11 +34,12 @@ class Ladybug extends Enemy {
 
     this.checkPlatforms(map);
     this.emitPosition();
+    this.emitHealthPoints();
 
     let col = this.getCollision();
     if(col.length > 0 && col.constructor.name !== 'Ladybug') {
       for(let i = 0; i < col.length; i++) {
-        if(col[i].constructor.name !== this.constructor.name) {
+        if(col[i].constructor.name !== this.constructor.name && col[i].constructor.name !== 'Bullet') {
           col[i].takeDamage(this.damage);
           this.die();
         }
