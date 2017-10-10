@@ -91,8 +91,31 @@ for (let j = 0; j < 16; j++) {
     textures.push(texture);
   }
 }
-
 textureSelector.x = window.innerWidth - textureSelector.width;
+
+let savebutton = new PIXI.Graphics();
+savebutton.lineStyle(2, 0xFF0000);
+savebutton.beginFill(0xEE3300);
+savebutton.drawRect(3, 400, 100, 35);
+savebutton.interactive = true;
+savebutton.on('pointerdown', (e) => {
+  let name = window.prompt('Save map as', 'map');
+  console.log('savemap', name);
+  socket.emit('savemap', name);
+});
+textureSelector.addChild(savebutton);
+
+let loadbutton = new PIXI.Graphics();
+loadbutton.lineStyle(2, 0x0000FF);
+loadbutton.beginFill(0x0033EE);
+loadbutton.drawRect(133, 400, 100, 35);
+loadbutton.interactive = true;
+loadbutton.on('pointerdown', (e) => {
+  let name = window.prompt('Load map named', 'map');
+  console.log('loadmap', name);
+  socket.emit('loadmap', name);
+});
+textureSelector.addChild(loadbutton);
 
 var camtrap = {
   x: 300,
@@ -181,9 +204,9 @@ socket.on('connect', function () {
 });
 
 var mapTiles = [];
-socket.on('sendMap', function (map) {
-  console.log('gotmap', map);
-  map.forEach(rect => {
+
+function addToMap(newmaps) {
+  newmaps.forEach(rect => {
     var texture = textures[rect.tile];
     var tilingSprite = new PIXI.extras.TilingSprite(texture, rect.width, rect.height);
     tilingSprite.position.x = rect.x;
@@ -191,6 +214,20 @@ socket.on('sendMap', function (map) {
     container.addChild(tilingSprite);
     mapTiles.push(tilingSprite);
   });
+}
+
+socket.on('sendMap', function (map) {
+  console.log('sendMap');
+  addToMap(map);
+});
+
+socket.on('newMap', function (map) {
+  console.log('newMap');
+  mapTiles.forEach(tile => {
+    container.removeChild(tile);
+  });
+  mapTiles = [];
+  addToMap(map);
 });
 
 socket.on('delMap', function (delTile) {

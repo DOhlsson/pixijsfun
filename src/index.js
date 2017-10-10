@@ -4,6 +4,8 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = module.exports = require('socket.io')(http);
+const fs = require('fs');
+
 const constants = require('./static/js/common_constants');
 const enemy = require('./entity/character/enemy/Enemy');
 const bullet = require('./entity/bullet/Bullet');
@@ -28,27 +30,12 @@ const spawn = {
   y: 200
 };
 
-//const map = mapgen();
-map = [{
-  x: 294,
-  y: 294,
-  height: 21,
-  width: 84,
-  tile: 123,
-  solid: true
-}, {
-  x: 378,
-  y: 273,
-  height: 21,
-  width: 84,
-  tile: 123,
-  solid: true
-}];
+let map = mapgen();
 const locks = {};
 
 // New connection
 io.on('connection', function(socket) {
-  socket.emit('sendMap', map);
+  socket.emit('newMap', map);
 
   let id = socket.id;
   entityManager.addEntity(id, new Player.Player(id, spawn.x, spawn.y, socket));
@@ -130,8 +117,28 @@ io.on('connection', function(socket) {
 
   });
 
-  socket.on('derp', function (msg) {
-    console.log('derp', msg);
+  socket.on('savemap', function (msg) {
+    console.log('savemap', msg);
+    fs.writeFile('src/maps/' + msg + '.json', JSON.stringify(map, null, 2), (err) => {
+      if (!err) {
+        console.log('success');
+      } else {
+        console.log('error', err);
+      }
+    });
+  });
+
+  socket.on('loadmap', function (msg) {
+    console.log('loadmap', msg);
+    fs.readFile('src/maps/' + msg + '.json', 'utf8', (err, data) => {
+      if (!err) {
+        console.log('success');
+        map = JSON.parse(data);
+        socket.emit('newMap', map);
+      } else {
+        console.log('error', err);
+      }
+    });
   });
 });
 

@@ -1,0 +1,18 @@
+[
+  {
+    "x": 294,
+    "y": 294,
+    "height": 21,
+    "width": 84,
+    "tile": 123,
+    "solid": true
+  },
+  {
+    "x": 378,
+    "y": 273,
+    "height": 21,
+    "width": 84,
+    "tile": 123,
+    "solid": true
+  }
+]
