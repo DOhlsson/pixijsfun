@@ -33,10 +33,10 @@ class Character extends entity.Entity {
       this.xvel = 0.1;
       this.direction = constants.MOVE_LEFT;
     } else if(direction === constants.STOP_RIGHT &&
-              this.direction === constants.MOVE_RIGHT) {
+      this.direction === constants.MOVE_RIGHT) {
       this.direction = constants.STOP;
     } else if(direction === constants.STOP_LEFT &&
-              this.direction === constants.MOVE_LEFT) {
+      this.direction === constants.MOVE_LEFT) {
       this.direction = constants.STOP;
     } else if(direction === constants.STOP_JUMPING) {
       this.jumping = false;
@@ -47,6 +47,7 @@ class Character extends entity.Entity {
     if(this.onGround) {
       this.yvel = -10;
       this.jumping = true;
+      this.emitPosition();
     }
   }
 
@@ -80,6 +81,9 @@ class Character extends entity.Entity {
       } else if(this.direction === constants.STOP &&
                 this.xvel > 0) {
         this.xvel -= 0.1;
+        if (this.xvel < 0) {
+          this.xvel = 0;
+        }
       }
     }
   }
@@ -96,6 +100,7 @@ class Character extends entity.Entity {
         this.onGround = true;
         onGround = true;
         this.y = rect.y - this.height;
+        this.emitPosition();
       }
     });
     if (!onGround) {

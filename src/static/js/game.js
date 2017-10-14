@@ -235,13 +235,19 @@ function newEntity(msg) {
 }
 
 function entityPos(msg) {
+  let entity;
   if (!entities[msg.id]) {
     console.log('NEW BUNNY');
     newEntity(msg);
   } else {
-    let entity = entities[msg.id];
+    entity = entities[msg.id];
+    if (msg.id === myid) {
+      console.log('ydiff', msg.y - entity.y);
+    }
     entity.x = msg.x;
     entity.y = msg.y;
+    entity.xvel = msg.xvel;
+    entity.yvel = msg.yvel;
     // bunny.bunny is the sprite inside the container
     // we flip it with scale.x = 1 or -1
     // and change the x offset of the sprite inside the container
@@ -250,6 +256,12 @@ function entityPos(msg) {
   }
 
   if (msg.id === myid) {
+    /*
+    console.log('msg.y', msg.y);
+    console.log('msg.yvel', msg.yvel);
+    console.log('entity.y', entity.y);
+    console.log('entity.yvel', entity.yvel);
+    */
     moveCamera();
   }
 }
@@ -303,6 +315,8 @@ function parsePackage(msg) {
     playSound(msg);
   } else if(msg.type === "hp") {
     updateHp(msg);
+  } else if(msg.type === "tick") {
+    servertick = msg.val;
   } else {
     console.log('Error, unknown package: ', msg);
   }
@@ -312,6 +326,35 @@ function parsePackage(msg) {
 function playSound(msg) {
   sounds[msg.file].play();
 }
+
+var servertick;
+var mytick = 0;
+// fake game loop
+setInterval(() => {
+  if (mytick > 0 && mytick % 1000 === 0) {
+    mytick = servertick;
+  }
+  if (servertick && mytick == 0) {
+    console.log('DO ONCE');
+    mytick = servertick;
+  } else if (mytick > 0) {
+    mytick++;
+  }
+  //console.log('TICKDIFF', servertick - mytick, mytick);
+  Object.keys(entities).forEach(key => {
+    let e = entities[key];
+    if (!e) {
+      return;
+    }
+    if (e.xvel) {
+      e.x += e.xvel;
+    }
+    if (e.yvel) {
+      console.log('yvel', e.yvel);
+      e.y += e.yvel;
+    }
+  });
+}, 16);
 
 function keyboard(keyCode) {
   var key = {};

@@ -117,14 +117,17 @@ class Entity {
    * Lets clients know the new position of an entity
    */
   emitPosition() {
-    networking.addPackage({
+    let p = {
       type: "pos",
       id: this.id,
       x: this.x,
       y: this.y,
       texture: this.texture,
       facing: this.facing
-    });
+    };
+    if (this.xvel) p.xvel = this.xvel;
+    if (this.yvel) p.yvel = this.yvel;
+    networking.addPackage(p);
   }
 
   /*

@@ -13,6 +13,7 @@ const Player = require('./entity/character/player/Player');
 const mapgen = require('./mapgen');
 const entityManager = require('./entityManager');
 const Grenade = require('./entity/grenade/Grenade');
+const networking = require('./networking');
 
 
 app.get('/', function(req, res){
@@ -142,11 +143,17 @@ io.on('connection', function(socket) {
   });
 });
 
+let tick = 0;
 function gameLoop() {
+  tick++;
+  let t = new Date();
+  if (tick % 6 == 0) {
+    networking.clear();
+  }
   Object.keys(entityManager.getEntities()).forEach(key => {
-    setTimeout ( function() {
-      while(locks[key] !== undefined);
-      locks[key] = true;
+    //setTimeout ( function() {
+      //while(locks[key] !== undefined);
+      //locks[key] = true;
 
       let entity = entityManager.getEntities()[key];
       if(entity === undefined) {
@@ -160,10 +167,18 @@ function gameLoop() {
           entity.move(map);
         }
       }
-      delete locks[key];
-    }, 50);
+      //delete locks[key];
+    //}, 50);
   });
+  if (tick % 6 == 0) {
+    networking.sendPackages(tick);
+  }
+  let time = new Date() - t;
+  if (time > 16) {
+    console.log('can\'t keep up!');
+  }
+  setTimeout(gameLoop, Math.max(0, 16 - time));
 }
 
-setInterval(gameLoop, 16);
+gameLoop();
 

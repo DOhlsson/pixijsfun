@@ -8,8 +8,8 @@ const Y_PADDING = 22;
 function createHealthBar(entity) {
   //Create the health bar
   let healthBar = new PIXI.Container();
-  healthBar.position.set(10, 10);
-  container.addChild(healthBar);
+  healthBar.position.set(-5, -22);
+  entity.addChild(healthBar);
 
   //Create the black background rectangle
   let innerBar = new PIXI.Graphics();
@@ -33,7 +33,7 @@ function createHealthBar(entity) {
 
 function updateHealthBar(entity, hp) {
   entity.healthBar.outer.width = hp * entity.healthBar.inner.width;
-  moveHealthBar(entity);
+  //moveHealthBar(entity);
 }
 
 function moveHealthBar(entity) {
