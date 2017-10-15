@@ -19,7 +19,7 @@ class Player extends character.Character {
     this.x = this.spawnx;
     this.y = this.spawny;
     this.hitpoints = this.maxhp;
-    this.emitPosition();
+    this.emitPosition(true);
   }
 }
 

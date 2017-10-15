@@ -33,8 +33,6 @@ class Ladybug extends Enemy {
     }
 
     this.checkPlatforms(map);
-    this.emitPosition();
-    this.emitHealthPoints();
 
     let col = this.getCollision();
     if(col.length > 0 && col.constructor.name !== 'Ladybug') {

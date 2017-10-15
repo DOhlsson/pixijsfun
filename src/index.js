@@ -147,15 +147,15 @@ let tick = 0;
 function gameLoop() {
   tick++;
   let t = new Date();
-  if (tick % 6 == 0) {
-    networking.clear();
-  }
-  Object.keys(entityManager.getEntities()).forEach(key => {
+  let entities = entityManager.getEntities();
+  let sendUpdate = tick % 6 === 0;
+
+  Object.keys(entities).forEach(key => {
     //setTimeout ( function() {
       //while(locks[key] !== undefined);
       //locks[key] = true;
 
-      let entity = entityManager.getEntities()[key];
+      let entity = entities[key];
       if(entity === undefined) {
         entityManager.deleteEntityById(key);
       } else {
@@ -165,12 +165,15 @@ function gameLoop() {
 
         if (!entity.delete) {
           entity.move(map);
+          if (sendUpdate) {
+            entity.emitPosition(false);
+          }
         }
       }
       //delete locks[key];
     //}, 50);
   });
-  if (tick % 6 == 0) {
+  if (sendUpdate) {
     networking.sendPackages(tick);
   }
   let time = new Date() - t;

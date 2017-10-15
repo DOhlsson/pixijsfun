@@ -249,6 +249,10 @@ function entityPos(msg) {
     entity.xvel = msg.xvel;
     entity.yvel = msg.yvel;
 
+    entity.jumping = msg.jumping;
+    entity.onGround = msg.onGround;
+    entity.direction = msg.direction;
+
     entity.xdiff = entity.x - entity.xserver;
     entity.ydiff = entity.y - entity.yserver;
 
@@ -363,41 +367,50 @@ setInterval(() => {
   //console.log('TICKDIFF', servertick - mytick, mytick);
   Object.keys(entities).forEach(key => {
     let e = entities[key];
-    
+    if (!e) {
+      return;
+    }
+
     // entity rubber banding
     e.xdiff = e.xserver - e.x;
     e.ydiff = e.yserver - e.y;
     if (Math.abs(e.xdiff) > 5) {
       console.log('e.xdiff', e.xdiff);
-      e.x += e.xdiff/10;
-      e.banding_xvel = 1;
+      e.x += e.xdiff/10 + (e.xdiff > 0 ? 5 : -5);
     }
     if (Math.abs(e.ydiff) > 5) {
       console.log('e.ydiff', e.ydiff);
-      e.y += e.ydiff/10;
-      e.banding_yvel = 1;
+      e.y += e.ydiff/10 + (e.ydiff > 0 ? 5 : -5);
     }
     // stop banding
-    
-    if (!e) {
-      return;
+
+    physics.horizontalMovement(e);
+    physics.verticalMovement(e);
+
+    if (key === myid) {
+      moveCamera();
     }
+
+    // update expected server stuff
+    //e.xserver += e.xvel * e.facing * 10;
+    //e.yserver += e.yvel;
+    
+    /*
     var cammove = false;
     if (e.xvel) {
-      //e.xvel += e.banding_xvel;
       e.x += e.xvel * e.facing * 10;
       e.xserver += e.xvel * e.facing * 10;
       cammove = true;
     }
     if (e.yvel) {
-      //e.yvel += e.banding_yvel;
-      e.y += e.yvel;
+      // vertmove e.y += e.yvel;
       e.yserver += e.yvel;
       cammove = true;
     }
     if (cammove) {
       moveCamera();
     }
+    */
   });
 }, 16);
 
@@ -439,37 +452,37 @@ function keyboard(keyCode) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  var jump = keyboard(KEY_UP),
-      moveLeft = keyboard(KEY_LEFT),
-      moveRight = keyboard(KEY_RIGHT),
-      shoot = keyboard(KEY_CTRL),
-      mapeditor = keyboard(KEY_e),
-      throwGrenade = keyboard(KEY_g),
-      spawnBugs = keyboard(KEY_q),
-      textureSelect = keyboard(KEY_t);
+  var jump = keyboard(constants.KEY_UP),
+      moveLeft = keyboard(constants.KEY_LEFT),
+      moveRight = keyboard(constants.KEY_RIGHT),
+      shoot = keyboard(constants.KEY_CTRL),
+      mapeditor = keyboard(constants.KEY_e),
+      throwGrenade = keyboard(constants.KEY_g),
+      spawnBugs = keyboard(constants.KEY_q),
+      textureSelect = keyboard(constants.KEY_t);
 
   jump.press = function() {
     socket.emit('jump', undefined);
   };
 
   jump.release = function() {
-    socket.emit('move', STOP_JUMP);
+    socket.emit('move', constants.STOP_JUMP);
   };
 
   moveLeft.press = function() {
-    socket.emit('move', MOVE_LEFT);
+    socket.emit('move', constants.MOVE_LEFT);
   };
 
   moveLeft.release = function() {
-    socket.emit('move', STOP_LEFT);
+    socket.emit('move', constants.STOP_LEFT);
   };
 
   moveRight.press = function() {
-    socket.emit('move', MOVE_RIGHT);
+    socket.emit('move', constants.MOVE_RIGHT);
   };
 
   moveRight.release = function() {
-    socket.emit('move', STOP_RIGHT);
+    socket.emit('move', constants.STOP_RIGHT);
   };
 
   shoot.press = function() {

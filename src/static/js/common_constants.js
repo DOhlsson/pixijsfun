@@ -1,38 +1,31 @@
 /*jshint esversion: 6 */
 
-/* player movement */
-const MOVE_LEFT = 1;
-const MOVE_RIGHT = 2;
-const STOP_LEFT = 3;
-const STOP_RIGHT = 4;
-const STOP = 5;
-const STOP_JUMP = 6;
-
-/* keyboard
- * http://help.adobe.com/en_US/AS2LCR/Flash_10.0/help.html?content=00000520.html
- */
-const KEY_LEFT = 37;
-const KEY_UP = 38;
-const KEY_RIGHT = 39;
-const KEY_CTRL = 17;
-const KEY_e = 69;
-const KEY_g = 71;
-const KEY_q = 81;
-const KEY_t = 84;
+var constants = {
+  /* player movement direction */
+  MOVE_LEFT: 1,
+  MOVE_RIGHT: 2,
+  STOP_LEFT: 3,
+  STOP_RIGHT: 4,
+  STOP: 5,
+  STOP_JUMP: 6,
+  
+  /* Physics constants */
+  BASE_WALK_SPEED: 10,
+  
+  /* keyboard
+   * http://help.adobe.com/en_US/AS2LCR/Flash_10.0/help.html?content=00000520.html
+   */
+  KEY_LEFT: 37,
+  KEY_UP: 38,
+  KEY_RIGHT: 39,
+  KEY_CTRL: 17,
+  KEY_e: 69,
+  KEY_g: 71,
+  KEY_q: 81,
+  KEY_t: 84
+};
 
 // check if node
 if (typeof module !== 'undefined') {
-  module.exports = {
-    MOVE_LEFT: MOVE_LEFT,
-    MOVE_RIGHT: MOVE_RIGHT,
-    STOP_LEFT: STOP_LEFT,
-    STOP_RIGHT: STOP_RIGHT,
-    STOP: STOP,
-    STOP_JUMP: STOP_JUMP,
-  
-    KEY_LEFT: KEY_LEFT,
-    KEY_RIGHT: KEY_RIGHT,
-    KEY_UP: KEY_UP,
-    KEY_CTRL: KEY_CTRL
-  };
+  module.exports = constants;
 }

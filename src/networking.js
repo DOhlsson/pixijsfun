@@ -5,19 +5,7 @@ const io = require('./index');
 var queue = [];
 
 function addPackage(pkg) {
-  let push = true;
-  queue.forEach((q, i) => {
-    if (q.id === pkg.id && q.type === pkg.type) {
-      queue[i] = pkg;
-      push = false;
-    }
-  });
-  if (push)
-    queue.push(pkg);
-}
-
-function clear() {
-  //queue = [];
+  queue.push(pkg);
 }
 
 function sendPackages(tick) {
@@ -46,6 +34,5 @@ function sendPackages(tick) {
 
 module.exports = {
   addPackage: addPackage,
-  sendPackages: sendPackages,
-  clear: clear
+  sendPackages: sendPackages
 };

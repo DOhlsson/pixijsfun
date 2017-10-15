@@ -116,18 +116,29 @@ class Entity {
   /*
    * Lets clients know the new position of an entity
    */
-  emitPosition() {
+  emitPosition(instant) {
     let p = {
       type: "pos",
       id: this.id,
       x: this.x,
       y: this.y,
       texture: this.texture,
-      facing: this.facing
+      facing: this.facing,
+      direction: this.direction
     };
     if (this.xvel) p.xvel = this.xvel;
     if (this.yvel) p.yvel = this.yvel;
-    networking.addPackage(p);
+    if (this.jumping) p.jumping = this.jumping;
+    if (this.onGround) p.onGround = this.onGround;
+
+    if (instant) {
+      // TODO: single entity emit
+      io.emit('entities', {
+        queue: [p]
+      });
+    } else {
+      networking.addPackage(p);
+    }
   }
 
   /*

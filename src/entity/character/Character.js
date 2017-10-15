@@ -3,8 +3,7 @@
 const entity = require('../Entity');
 const constants = require('../../static/js/common_constants');
 const networking = require('../../networking');
-
-const BASE_SPEED = 10;
+const physics = require('../../static/js/physics');
 
 class Character extends entity.Entity {
   constructor(id, x, y, texture) {
@@ -47,44 +46,7 @@ class Character extends entity.Entity {
     if(this.onGround) {
       this.yvel = -10;
       this.jumping = true;
-      this.emitPosition();
-    }
-  }
-
-  verticalMovement() {
-    if (this.jumping) {
-      this.yvel -= 1.5;
-      if(this.yvel < -12) {
-        this.jumping=false;
-      }
-    }
-    if (this.yvel > 0 || !this.onGround) {
-      this.yvel += 0.7; // accelerate downwards
-      this.yvel = this.yvel < 10 ? this.yvel : 10;
-      this.y += this.yvel;
-    } else if (this.yvel < 0) { // moving up
-      this.y += this.yvel;
-      this.onGround = false;
-    }
-  }
-
-  horizontalMovement() {
-    if (this.xvel > 0) {
-      if (this.direction === constants.MOVE_LEFT) {
-        this.facing = -1;
-        this.x -= BASE_SPEED * this.xvel;
-        if(this.xvel < 1.0) this.xvel += 0.05;
-      } else if(this.direction === constants.MOVE_RIGHT) {
-        this.facing = 1;
-        this.x += BASE_SPEED * this.xvel;
-        if(this.xvel < 1.0) this.xvel += 0.05;
-      } else if(this.direction === constants.STOP &&
-                this.xvel > 0) {
-        this.xvel -= 0.1;
-        if (this.xvel < 0) {
-          this.xvel = 0;
-        }
-      }
+      this.emitPosition(true);
     }
   }
 
@@ -100,7 +62,7 @@ class Character extends entity.Entity {
         this.onGround = true;
         onGround = true;
         this.y = rect.y - this.height;
-        this.emitPosition();
+        this.emitPosition(true);
       }
     });
     if (!onGround) {
@@ -119,7 +81,6 @@ class Character extends entity.Entity {
 
   takeDamage(dmg) {
     super.takeDamage(dmg);
-    this.emitPosition();
     this.emitHealthPoints();
   }
 
@@ -128,12 +89,12 @@ class Character extends entity.Entity {
     let tmpY = this.y;
     let tmpHp = this.hitpoints;
 
-    this.verticalMovement();
-    this.horizontalMovement();
+    physics.horizontalMovement(this);
+    physics.verticalMovement(this);
     this.checkPlatforms(map);
 
+    // TODO refactor into this.hasmoved?
     if(tmpX != this.x || tmpY != this.y || tmpHp != this.hitpoints) {
-      this.emitPosition();
       this.emitHealthPoints();
     }
   }
