@@ -242,15 +242,31 @@ function entityPos(msg) {
   } else {
     entity = entities[msg.id];
     if (msg.id === myid) {
-      console.log('ydiff', msg.y - entity.y);
+
     }
-    entity.x = msg.x;
-    entity.y = msg.y;
+    entity.xserver = msg.x;
+    entity.yserver = msg.y;
     entity.xvel = msg.xvel;
     entity.yvel = msg.yvel;
+
+    entity.xdiff = entity.x - entity.xserver;
+    entity.ydiff = entity.y - entity.yserver;
+
+    if (Math.abs(entity.xdiff) < 5) {
+      entity.x = entity.xserver;
+      entity.xdiff = 0;
+    }
+    if (Math.abs(entity.ydiff) < 5) {
+      entity.y = entity.yserver;
+      entity.ydiff = 0;
+    }
+
+
+
     // bunny.bunny is the sprite inside the container
     // we flip it with scale.x = 1 or -1
     // and change the x offset of the sprite inside the container
+    entity.facing = msg.facing;
     entity.texture.scale.x = msg.facing;
     entity.texture.x = msg.facing === 1 ? 0 : 26;
   }
@@ -317,6 +333,9 @@ function parsePackage(msg) {
     updateHp(msg);
   } else if(msg.type === "tick") {
     servertick = msg.val;
+    if (servertick !== mytick) {
+      //console.log('TICKDIFF', servertick - mytick, mytick);
+    }
   } else {
     console.log('Error, unknown package: ', msg);
   }
@@ -331,6 +350,7 @@ var servertick;
 var mytick = 0;
 // fake game loop
 setInterval(() => {
+  var t = new Date();
   if (mytick > 0 && mytick % 1000 === 0) {
     mytick = servertick;
   }
@@ -343,15 +363,40 @@ setInterval(() => {
   //console.log('TICKDIFF', servertick - mytick, mytick);
   Object.keys(entities).forEach(key => {
     let e = entities[key];
+    
+    // entity rubber banding
+    e.xdiff = e.xserver - e.x;
+    e.ydiff = e.yserver - e.y;
+    if (Math.abs(e.xdiff) > 5) {
+      console.log('e.xdiff', e.xdiff);
+      e.x += e.xdiff/10;
+      e.banding_xvel = 1;
+    }
+    if (Math.abs(e.ydiff) > 5) {
+      console.log('e.ydiff', e.ydiff);
+      e.y += e.ydiff/10;
+      e.banding_yvel = 1;
+    }
+    // stop banding
+    
     if (!e) {
       return;
     }
+    var cammove = false;
     if (e.xvel) {
-      e.x += e.xvel;
+      //e.xvel += e.banding_xvel;
+      e.x += e.xvel * e.facing * 10;
+      e.xserver += e.xvel * e.facing * 10;
+      cammove = true;
     }
     if (e.yvel) {
-      console.log('yvel', e.yvel);
+      //e.yvel += e.banding_yvel;
       e.y += e.yvel;
+      e.yserver += e.yvel;
+      cammove = true;
+    }
+    if (cammove) {
+      moveCamera();
     }
   });
 }, 16);

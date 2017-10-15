@@ -20,16 +20,19 @@ const KEY_g = 71;
 const KEY_q = 81;
 const KEY_t = 84;
 
-module.exports = {
-  MOVE_LEFT: MOVE_LEFT,
-  MOVE_RIGHT: MOVE_RIGHT,
-  STOP_LEFT: STOP_LEFT,
-  STOP_RIGHT: STOP_RIGHT,
-  STOP: STOP,
-  STOP_JUMP: STOP_JUMP,
-
-  KEY_LEFT: KEY_LEFT,
-  KEY_RIGHT: KEY_RIGHT,
-  KEY_UP: KEY_UP,
-  KEY_CTRL: KEY_CTRL
-};
+// check if node
+if (typeof module !== 'undefined') {
+  module.exports = {
+    MOVE_LEFT: MOVE_LEFT,
+    MOVE_RIGHT: MOVE_RIGHT,
+    STOP_LEFT: STOP_LEFT,
+    STOP_RIGHT: STOP_RIGHT,
+    STOP: STOP,
+    STOP_JUMP: STOP_JUMP,
+  
+    KEY_LEFT: KEY_LEFT,
+    KEY_RIGHT: KEY_RIGHT,
+    KEY_UP: KEY_UP,
+    KEY_CTRL: KEY_CTRL
+  };
+}
